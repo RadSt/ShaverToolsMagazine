@@ -1,0 +1,12 @@
+language: csharp
+solution: ./ShopService/ShopService.sln
+dist: trusty
+sudo: required
+mono: none
+dotnet: 1.0.0-preview2-003131
+install:
+  - export DOTNET_CLI_TELEMETRY_OPTOUT=1
+before_script:
+  - chmod a+x ./build.sh
+script:
+  - ./build.sh

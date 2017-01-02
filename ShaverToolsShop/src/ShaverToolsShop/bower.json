@@ -1,0 +1,8 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "jquery-validation-unobtrusive": "3.2.6",
+    "bootstrap": "3.3.6"
+  }
+}
