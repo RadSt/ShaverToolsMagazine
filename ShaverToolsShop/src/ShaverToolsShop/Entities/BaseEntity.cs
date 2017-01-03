@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using ShaverToolsShop.Conventions;
 
 namespace ShaverToolsShop.Entities
 {
-    public class BaseEntity : IEntity
+    public abstract class BaseEntity: IEntity
     {
         public Guid Id { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShaverToolsShop.Entities;
 
 namespace ShaverToolsShop.Data
 {
@@ -9,5 +10,11 @@ namespace ShaverToolsShop.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
+
+        public DbSet<Product> Products { get; set; }    
     }
 }

@@ -4,7 +4,6 @@ using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using ShaverToolsShop.Conventions;
-using ShaverToolsShop.Conventions.Mapping;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Data;
