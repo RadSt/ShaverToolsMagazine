@@ -1,5 +1,5 @@
 language: csharp
-solution: ./ShopService/ShopService.sln
+solution: ./ShaverToolsShop/ShaverToolsShop.sln
 dist: trusty
 sudo: required
 mono: none

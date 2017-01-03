@@ -1,4 +1,4 @@
-﻿namespace ShopService.Conventions
+﻿namespace ShaverToolsShop.Conventions
 {
     /// <summary>
     /// Результат выполнения команды

@@ -1,10 +1,12 @@
-﻿namespace ShopService.Conventions
+﻿using System;
+
+namespace ShaverToolsShop.Conventions
 {
     /// <summary>
     /// Интерфейс сущности
     /// </summary>
     public interface IEntity
     {
-        long Id { get; set; }
+        Guid Id { get; set; }
     }
 }
