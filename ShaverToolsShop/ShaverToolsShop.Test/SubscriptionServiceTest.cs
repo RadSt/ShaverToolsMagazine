@@ -25,7 +25,9 @@ namespace ShaverToolsShop.Test
         {
             _subscriptionReadRepository = new Mock<ISubscriptionReadRepository>();
             _subscriptionRepository = new Mock<ISubscriptionRepository>();
-            _subscriptionService = new SubscriptionService(_subscriptionReadRepository.Object);
+            _subscriptionService = new SubscriptionService(_subscriptionReadRepository.Object
+                , _subscriptionRepository.Object);
+
             _subscriptions = new List<Subscription>
             {
                 new Subscription
@@ -47,6 +49,7 @@ namespace ShaverToolsShop.Test
                     }
                 }
             };
+
             _subscription =
                 new Subscription
                 {
@@ -68,6 +71,7 @@ namespace ShaverToolsShop.Test
                 };
 
         }
+
         [Test]
         public async Task ShouldReturnSubscriptions_WhenWeAskAllSubscriptions()
         {
@@ -80,22 +84,36 @@ namespace ShaverToolsShop.Test
             //Assert
             Assert.IsNotNull(results);
         }
+
         [Test]
-        public void ShouldAddSubscription_WhenWeAddSubscription()
+        public async Task ShouldAddSubscription_WhenWeAddSubscription()
         {
             //Arrange
-            var id = Guid.NewGuid();
-            _subscriptionRepository.Setup(m => m.Add(_subscription)).ReturnsAsync((Subscription e) =>
+            var subscription = new Subscription
             {
-                e.Id = id;
-                return e;
-            });
+                StartDate = DateTime.Parse("01/01/2017"),
+                EndDate = DateTime.Parse("03/01/2017"),
+                Products = new List<Product>
+                    {
+                        new Product
+                        {
+                            Name = "Бритвенный станок",
+                            Price = 1
+                        },
+                        new Product
+                        {
+                            Name = "Средство после бритья",
+                            Price = 10
+                        }
+                    }
+            };
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(subscription)).ReturnsAsync(subscription);
 
             //Act
-            _subscriptionService.Create(_subscriptions);
+            await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
-            Assert.AreEqual(id, _subscription.Id);
+            Assert.AreEqual(subscription.StartDate, _subscription.StartDate);
         }
     }
 }

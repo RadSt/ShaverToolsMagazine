@@ -10,16 +10,24 @@ namespace ShaverToolsShop.Services
     public class SubscriptionService : BaseService<Subscription>, ISubscriptionService
     {
         private readonly ISubscriptionReadRepository _subscriptionReadRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public SubscriptionService(ISubscriptionReadRepository subscriptionReadRepository)
+        public SubscriptionService(ISubscriptionReadRepository subscriptionReadRepository
+            , ISubscriptionRepository subscriptionRepository)
         {
             _subscriptionReadRepository = subscriptionReadRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         public async Task<List<Subscription>> GetAll()
         {
             return await _subscriptionReadRepository
                 .GetAllSubscriptions();
+        }
+
+        public async Task<Subscription> AddNewSubscription(Subscription subscription)
+        {
+            return await _subscriptionRepository.AddNewSubscription(subscription);
         }
     }
 }

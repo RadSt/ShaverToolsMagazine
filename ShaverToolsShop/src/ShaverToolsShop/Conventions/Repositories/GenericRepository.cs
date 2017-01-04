@@ -76,17 +76,17 @@ namespace ShaverToolsShop.Conventions.Repositories
             return query;
         }
 
-        public virtual EntityEntry<T> Add(T entity)
+        public virtual T Add(T entity)
         {
             entity.Id = Guid.NewGuid();
             var res = _dbset.Add(entity);
 
-            return res;
+            return res.Entity;
         }
 
-        public virtual EntityEntry<T> Delete(T entity)
+        public virtual T Delete(T entity)
         {
-            return _dbset.Remove(entity);
+            return _dbset.Remove(entity).Entity;
         }
 
         public void Edit(T entity)

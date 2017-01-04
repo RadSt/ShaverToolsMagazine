@@ -15,8 +15,8 @@ namespace ShaverToolsShop.Conventions.Repositories
         Task<T> GetAsync(object id);
         IQueryable<T> GetAll();
         IEnumerable<T> FindBy(Expression<Func<T, bool>> predicate);
-        EntityEntry<T> Add(T entity);
-        EntityEntry<T> Delete(T entity);
+        T Add(T entity);
+        T Delete(T entity);
         void Edit(T entity);
         void AddRange(IList<T> entities);
         void DeleteRange(IList<T> entities);
