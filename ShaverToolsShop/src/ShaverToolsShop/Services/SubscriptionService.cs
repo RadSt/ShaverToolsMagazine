@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ShaverToolsShop.Conventions.Enums;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Entities;
@@ -27,6 +28,7 @@ namespace ShaverToolsShop.Services
 
         public async Task<Subscription> AddNewSubscription(Subscription subscription)
         {
+            subscription.SubscriptionStatus = SubscriptionStatus.Started;
             return await _subscriptionRepository.AddNewSubscription(subscription);
         }
     }
