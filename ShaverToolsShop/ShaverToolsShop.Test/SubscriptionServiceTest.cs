@@ -50,11 +50,11 @@ namespace ShaverToolsShop.Test
         {
             //Arrange
             var startDate = DateTime.Parse("01/01/2017");
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate))
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription))
                 .ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
 
             //Assert
             Assert.AreEqual(_subscription.Id, addedSubscription.Id);
@@ -78,11 +78,11 @@ namespace ShaverToolsShop.Test
         {
             //Arrange
             var startDate = DateTime.Parse("01/01/2017");
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate))
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription))
                 .ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
 
             //Assert
             Assert.AreEqual(_subscription.StartDate, startDate);
@@ -107,10 +107,11 @@ namespace ShaverToolsShop.Test
         public async Task SubscriptionStatusMustBeStarted_WhenWeAddNewSubscription()
         {
             //Arrange
+            var startDate = DateTime.Parse("01/01/2017");
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
 
             //Assert
             Assert.AreEqual(SubscriptionStatus.Started, addedSubscription.SubscriptionStatus);

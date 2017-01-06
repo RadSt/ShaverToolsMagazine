@@ -9,7 +9,7 @@ namespace ShaverToolsShop.Conventions.Services
     public interface ISubscriptionService: IService<Subscription>
     {
         Task<List<Subscription>> GetAll();
-        Task<Subscription> AddNewSubscription(Subscription subscription);
+        Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate);
         Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate);
     }
 }

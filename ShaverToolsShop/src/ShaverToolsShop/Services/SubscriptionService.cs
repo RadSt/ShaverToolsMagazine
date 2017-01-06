@@ -27,9 +27,10 @@ namespace ShaverToolsShop.Services
                 .GetAllSubscriptions();
         }
 
-        public async Task<Subscription> AddNewSubscription(Subscription subscription)
+        public async Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate)
         {
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
+            subscription.EndDate = startDate;
             return await _subscriptionRepository.AddNewSubscription(subscription);
         }
 
