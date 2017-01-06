@@ -52,7 +52,7 @@ namespace ShaverToolsShop.Test
             var results = await _productService.GetAll();
 
             //Assert
-            Assert.IsNotNull(productsQty, results.Count);
+            Assert.AreEqual(productsQty, results.Count);
         }
     }
 }
