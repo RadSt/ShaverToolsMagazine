@@ -10,6 +10,7 @@ namespace ShaverToolsShop.Entities
         public DateTime EndDate { get; set; }
         public SubscriptionStatus SubscriptionStatus { get; set; }
         public SubscriptionType SubscriptionType { get; set; }
-        public List<Product> Products { get; set; } 
+        public Guid ProductId { get; set; }
+        public Product Product { get; set; }    
     }
 }
