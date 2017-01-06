@@ -26,6 +26,8 @@ namespace ShaverToolsShop.Test
                 new Subscription
                 {
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+                    StartDate = DateTime.Parse("01/01/2017"),
+                    EndDate = DateTime.Parse("03/01/2017"),
                     Product =
                         new Product
                         {
@@ -48,27 +50,14 @@ namespace ShaverToolsShop.Test
         {
             //Arrange
             var startDate = DateTime.Parse("01/01/2017");
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate)).ReturnsAsync(_subscription);
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate))
+                .ReturnsAsync(_subscription);
 
             //Act
             var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
             Assert.AreEqual(_subscription.Id, addedSubscription.Id);
-        }
-
-        [Test]
-        public async Task StartDateMustPassedDate_WhenWeAddSubscription()
-        {
-            //Arrange
-            var startDate = DateTime.Parse("01/01/2017");
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate)).ReturnsAsync(_subscription);
-
-            //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
-
-            //Assert
-            Assert.AreEqual(_subscription.StartDate, startDate);
         }
 
         [Test]
@@ -82,6 +71,21 @@ namespace ShaverToolsShop.Test
 
             //Assert
             Assert.IsNotNull(results);
+        }
+
+        [Test]
+        public async Task StartDateMustPassedDate_WhenWeAddSubscription()
+        {
+            //Arrange
+            var startDate = DateTime.Parse("01/01/2017");
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate))
+                .ReturnsAsync(_subscription);
+
+            //Act
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+
+            //Assert
+            Assert.AreEqual(_subscription.StartDate, startDate);
         }
 
         [Test]
