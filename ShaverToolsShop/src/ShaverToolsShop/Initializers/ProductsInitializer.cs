@@ -28,13 +28,13 @@ namespace ShaverToolsShop.Initializers
                 },
                 new Product
                 {
-                    Name = "Гель для бритья",
-                    Price = 8
+                    Name = "Бритвенный станок + гель для бритья",
+                    Price = 9
                 },
                 new Product
                 {
-                    Name = "Средство после бритья",
-                    Price = 10
+                    Name = "бритвенный станок + гель + средство после бритья",
+                    Price = 19
                 }
             };
             var productsToAdd = products.Where(x => !productsNamesInDb.Contains(x.Name)).ToList();
