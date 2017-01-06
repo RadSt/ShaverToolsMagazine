@@ -21,10 +21,10 @@ namespace ShaverToolsShop.Services
             _subscriptionRepository = subscriptionRepository;
         }
 
-        public async Task<List<Subscription>> GetAll()
+        public async Task<List<Subscription>> GetAllWithProducts()
         {
             return await _subscriptionReadRepository
-                .GetAllSubscriptions();
+                .GetAllSubscriptionsWithProducts();
         }
 
         public async Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate)

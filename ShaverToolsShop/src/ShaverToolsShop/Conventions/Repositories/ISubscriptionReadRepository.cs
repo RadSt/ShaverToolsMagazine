@@ -6,6 +6,6 @@ namespace ShaverToolsShop.Conventions.Repositories
 {
     public interface ISubscriptionReadRepository: IReadRepository<Subscription>
     {
-        Task<List<Subscription>> GetAllSubscriptions();
+        Task<List<Subscription>> GetAllSubscriptionsWithProducts();
     }
 }

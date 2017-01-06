@@ -8,7 +8,7 @@ namespace ShaverToolsShop.Conventions.Services
 {
     public interface ISubscriptionService: IService<Subscription>
     {
-        Task<List<Subscription>> GetAll();
+        Task<List<Subscription>> GetAllWithProducts();
         Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate);
         Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate);
         List<int> GetDaysInMonth();

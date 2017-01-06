@@ -12,9 +12,9 @@ namespace ShaverToolsShop.Repositories
         {
         }
 
-        public Task<List<Subscription>> GetAllSubscriptions()
+        public Task<List<Subscription>> GetAllSubscriptionsWithProducts()
         {
-            return GetAll().ToListAsync();
+            return GetAll().Include(x=> x.Product).ToListAsync();
         }
     }
 }
