@@ -26,8 +26,6 @@ namespace ShaverToolsShop.Test
                 new Subscription
                 {
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
-                    StartDate = DateTime.Parse("01/01/2017"),
-                    EndDate = DateTime.Parse("03/01/2017"),
                     Product =
                         new Product
                         {
@@ -49,13 +47,28 @@ namespace ShaverToolsShop.Test
         public async Task ShouldAddSubscription_WhenWeAddSubscription()
         {
             //Arrange
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
+            var startDate = DateTime.Parse("01/01/2017");
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate)).ReturnsAsync(_subscription);
 
             //Act
             var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
             Assert.AreEqual(_subscription.Id, addedSubscription.Id);
+        }
+
+        [Test]
+        public async Task StartDateMustPassedDate_WhenWeAddSubscription()
+        {
+            //Arrange
+            var startDate = DateTime.Parse("01/01/2017");
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription, startDate)).ReturnsAsync(_subscription);
+
+            //Act
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+
+            //Assert
+            Assert.AreEqual(_subscription.StartDate, startDate);
         }
 
         [Test]
@@ -75,12 +88,12 @@ namespace ShaverToolsShop.Test
         public async Task SubscriptionChangesMustBeSaved_WhenWeStopedSubscription()
         {
             //Arrange
-            var stoppedDate = DateTime.Parse("02/01/2017");
+            var endDate = DateTime.Parse("03/01/2017");
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
 
 
             //Act
-            await _subscriptionService.StoppedSubscription(_subscription.Id, stoppedDate);
+            await _subscriptionService.StoppedSubscription(_subscription.Id, endDate);
 
             //Assert
             _subscriptionRepository.Verify(m => m.SaveAsync(), Times.Once);
