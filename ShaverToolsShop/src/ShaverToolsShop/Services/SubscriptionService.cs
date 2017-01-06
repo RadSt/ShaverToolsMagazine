@@ -42,5 +42,16 @@ namespace ShaverToolsShop.Services
             await _subscriptionRepository.SaveAsync();
             return CommandResult.Success;
         }
+
+        public List<int> GetDaysInMonth()
+        {
+            var daysInMonth = new List<int>();
+            for (var i = 0; i <= 31; i++)
+            {
+                daysInMonth.Add(i);
+            }
+
+            return daysInMonth;
+        }
     }
 }

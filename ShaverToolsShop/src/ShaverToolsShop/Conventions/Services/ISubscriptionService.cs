@@ -11,5 +11,6 @@ namespace ShaverToolsShop.Conventions.Services
         Task<List<Subscription>> GetAll();
         Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate);
         Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate);
+        List<int> GetDaysInMonth();
     }
 }

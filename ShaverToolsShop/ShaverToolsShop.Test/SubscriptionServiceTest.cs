@@ -118,17 +118,17 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task WeGetListWithFirtyOneDay_WhenWeAskDaysForSubscription()
+        public void WeGetListWithFirtyOneDay_WhenWeAskDaysForSubscription()
         {
             //Arrange
            var daysInMonthList = new List<int>();
-            for (int i = 0; i <= 31; i++)
+            for (var i = 0; i <= 31; i++)
             {
                 daysInMonthList.Add(i);
             }
 
             //Act
-            var newDaysInMonth = await _subscriptionService.GetDaysInMonth();
+            var newDaysInMonth = _subscriptionService.GetDaysInMonth();
 
             //Assert
             Assert.AreEqual(daysInMonthList, newDaysInMonth);
