@@ -28,6 +28,7 @@ namespace ShaverToolsShop.Test
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
                     StartDate = DateTime.Parse("01/01/2017"),
                     EndDate = DateTime.Parse("03/01/2017"),
+                    SubscriptionType = SubscriptionType.OnceInMonth,
                     Product =
                         new Product
                         {
@@ -132,6 +133,21 @@ namespace ShaverToolsShop.Test
 
             //Assert
             Assert.AreEqual(daysInMonthList, newDaysInMonth);
+        }
+
+        [Test]
+        public async Task WeMustGetSubscriptionCost_WhenWeCalculatingAllSubscriptions()
+        {
+            //Arrange
+            var reportDate = DateTime.Parse("02/01/2017");
+            var subscriptionCost = 1;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(reportDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
         }
     }
 }
