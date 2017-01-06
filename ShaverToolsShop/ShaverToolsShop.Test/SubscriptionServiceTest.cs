@@ -61,16 +61,16 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task ShouldReturnSubscriptions_WhenWeAskAllSubscriptions()
+        public async Task ShouldReturnSubscriptionsWithProducts_WhenWeAskAllSubscriptionsWithProducts()
         {
             //Arrange
-            _subscriptionReadRepository.Setup(x => x.GetAllSubscriptions()).ReturnsAsync(_subscriptions);
+            _subscriptionReadRepository.Setup(x => x.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
-            var results = await _subscriptionService.GetAll();
+            var result = await _subscriptionService.GetAllWithProducts();
 
             //Assert
-            Assert.IsNotNull(results);
+            Assert.AreEqual(_subscriptions, result);
         }
 
         [Test]
