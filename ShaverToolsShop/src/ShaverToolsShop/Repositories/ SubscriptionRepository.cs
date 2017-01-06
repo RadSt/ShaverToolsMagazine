@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Entities;
@@ -16,6 +17,11 @@ namespace ShaverToolsShop.Repositories
             var subscriptionEntity =  Add(subscription);
             await SaveAsync();
             return subscriptionEntity;
+        }
+
+        public async Task<Subscription> GetSubscriptionAsync(Guid subscriptionId)
+        {
+            return await GetAsync(subscriptionId);
         }
     }
 }

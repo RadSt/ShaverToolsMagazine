@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using ShaverToolsShop.Conventions;
 using ShaverToolsShop.Conventions.Enums;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
@@ -30,6 +31,15 @@ namespace ShaverToolsShop.Services
         {
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
             return await _subscriptionRepository.AddNewSubscription(subscription);
+        }
+
+        public async Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate)
+        {
+            var subscriptionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscriptionId);
+            subscriptionEntity.SubscriptionStatus = SubscriptionStatus.Stopped;
+            subscriptionEntity.EndDate = stoppedDate;
+            await _subscriptionRepository.SaveAsync();
+            return CommandResult.Success;
         }
     }
 }

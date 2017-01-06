@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ShaverToolsShop.Entities;
 
 namespace ShaverToolsShop.Conventions.Repositories
@@ -6,5 +7,6 @@ namespace ShaverToolsShop.Conventions.Repositories
     public interface ISubscriptionRepository: IRepository<Subscription>
     {
         Task<Subscription> AddNewSubscription(Subscription subscription);
+        Task<Subscription> GetSubscriptionAsync(Guid subscriptionId);
     }
 }
