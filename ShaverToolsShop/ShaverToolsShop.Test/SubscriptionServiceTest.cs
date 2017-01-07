@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -44,6 +45,55 @@ namespace ShaverToolsShop.Test
         private ISubscriptionService _subscriptionService;
         private List<Subscription> _subscriptions;
         private Subscription _subscription;
+
+        [Test]
+        public async Task MustReturnOnceTimeCost_WhenWeCalculatingSubscriptionOnceATwoMonthsForTwoMonthsForOneProduct()
+        {
+            //Arrange
+            var twoMonthsDate = DateTime.Parse("01.03.2017");
+            _subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
+            var subscriptionCost = 1M;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
+
+        [Test]
+        public async Task MustReturnOneTimeCost_WhenWeCalculatingSubscriptionOnceAMonthForOneMonthForOneProduct()
+        {
+            //Arrange
+            var oneMonthDate = DateTime.Parse("01.02.2017");
+            _subscription.SubscriptionType = SubscriptionType.OnceInMonth;
+            var subscriptionCost = 1M;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
+
+        [Test]
+        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiveAMonthForOneMonthForOneProduct()
+        {
+            //Arrange
+            var oneMonthDate = DateTime.Parse("01.02.2017");
+            _subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
+            _subscription.SecondDeliveryDay = 28;
+            var subscriptionCost = 2M;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
 
         [Test]
         public async Task ShouldAddSubscription_WhenWeAddSubscription()
@@ -121,7 +171,7 @@ namespace ShaverToolsShop.Test
         public void WeGetListWithFirtyOneDay_WhenWeAskDaysForSubscription()
         {
             //Arrange
-           var daysInMonthList = new List<int>();
+            var daysInMonthList = new List<int>();
             var day = 1;
             for (var i = 0; i < 31; i++)
             {
@@ -130,59 +180,12 @@ namespace ShaverToolsShop.Test
             }
 
             //Act
-            var newDaysInMonth = _subscriptionService.GetDaysInMonth();
+            var newDaysInMonth = _subscriptionService.GetDaysInMonthSelectList().Select(x =>
+                int.Parse(x.Value)
+            ).ToList();
 
             //Assert
             Assert.AreEqual(daysInMonthList, newDaysInMonth);
-        }
-
-        [Test]
-        public async Task MustReturnOneTimeCost_WhenWeCalculatingSubscriptionOnceAMonthForOneMonthForOneProduct()
-        {
-            //Arrange
-            var oneMonthDate = DateTime.Parse("01.02.2017");
-            _subscription.SubscriptionType = SubscriptionType.OnceInMonth;
-            var subscriptionCost = 1M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
-        }
-
-        [Test]
-        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiveAMonthForOneMonthForOneProduct()
-        {
-            //Arrange
-            var oneMonthDate = DateTime.Parse("01.02.2017");
-            _subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
-            _subscription.SecondDeliveryDay = 28;
-            var subscriptionCost = 2M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
-        }
-
-        [Test]
-        public async Task MustReturnOnceTimeCost_WhenWeCalculatingSubscriptionOnceATwoMonthsForTwoMonthsForOneProduct()
-        {
-            //Arrange
-            var twoMonthsDate = DateTime.Parse("01.03.2017");
-            _subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
-            var subscriptionCost = 1M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
         }
     }
 }

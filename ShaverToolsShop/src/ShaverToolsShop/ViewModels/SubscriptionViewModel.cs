@@ -15,7 +15,7 @@ namespace ShaverToolsShop.ViewModels
         public SubscriptionType SubscriptionType { get; set; }
         public Guid ProductId { get; set; }
         public IEnumerable<SelectListItem> ProductsList { get; set; }
-        public List<int> DaysInMonthList { get; set; }
+        public IEnumerable<SelectListItem> DaysInMonthList { get; set; }
         public List<Subscription> CurrentActiveSubscriptions { get; set; }
     }
 }

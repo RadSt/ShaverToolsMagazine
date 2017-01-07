@@ -24,7 +24,7 @@ namespace ShaverToolsShop.Controllers
             {
                 CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProducts(),
                 ProductsList = await _productService.GetAllForSelect(),
-                DaysInMonthList = _subscriptionService.GetDaysInMonth()
+                DaysInMonthList = _subscriptionService.GetDaysInMonthSelectList()
             };
 
             return View(subscriptionViewModel);

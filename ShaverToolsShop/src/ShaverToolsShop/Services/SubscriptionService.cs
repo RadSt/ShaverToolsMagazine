@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ShaverToolsShop.Conventions;
 using ShaverToolsShop.Conventions.Enums;
 using ShaverToolsShop.Conventions.Repositories;
@@ -42,7 +44,7 @@ namespace ShaverToolsShop.Services
             return CommandResult.Success;
         }
 
-        public List<int> GetDaysInMonth()
+        public IEnumerable<SelectListItem> GetDaysInMonthSelectList()
         {
             var daysInMonth = new List<int>();
             var day = 1;
@@ -53,7 +55,14 @@ namespace ShaverToolsShop.Services
                 day++;
             }
 
-            return daysInMonth;
+            var daysInMonthList = daysInMonth.Select(x =>
+                new SelectListItem
+                {
+                    Value = x.ToString(),
+                    Text = x.ToString()
+                });
+
+            return new SelectList(daysInMonthList, "Value", "Text");
         }
 
         public async Task<decimal> CalculateSubscriptionsCost(DateTime reportDate)
