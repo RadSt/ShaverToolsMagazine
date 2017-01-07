@@ -123,7 +123,7 @@ namespace ShaverToolsShop.Test
             //Arrange
            var daysInMonthList = new List<int>();
             var day = 1;
-            for (var i = 0; i <= 31; i++)
+            for (var i = 0; i < 31; i++)
             {
                 daysInMonthList.Add(day);
                 day++;
