@@ -1,25 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using ShaverToolsShop.Conventions;
-using ShaverToolsShop.Conventions.Repositories;
-using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Data;
 
 namespace ShaverToolsShop.Initializers.AutofacConfigs
 {
     /// <summary>
-    /// Регистрация зависимостей в Autofac
+    ///     Регистрация зависимостей в Autofac
     /// </summary>
     public static class AutofacConfig
     {
         public static void RegisterDependencies(this ContainerBuilder builder)
         {
-            var assemblies = new Assembly[]
+            var assemblies = new[]
             {
-                typeof(ApplicationDbContext).GetTypeInfo().Assembly,
+                typeof(ApplicationDbContext).GetTypeInfo().Assembly
             };
 
             // Регистрация Initialize классов
@@ -29,21 +26,20 @@ namespace ShaverToolsShop.Initializers.AutofacConfigs
 
             // регистрация сервисов
             builder.RegisterAssemblyTypes(assemblies)
-               .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(BaseService<>))))
-               .AsImplementedInterfaces().InstancePerRequest();
+                .Where(t => t.Name.EndsWith("Service"))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
 
             // регистрация репозиториев
             builder.RegisterAssemblyTypes(assemblies)
-               .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(GenericReadRepository<>))))
-               .AsImplementedInterfaces().InstancePerRequest();
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
 
-            builder.RegisterAssemblyTypes(assemblies)
-               .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(GenericRepository<>))))
-               .AsImplementedInterfaces().InstancePerRequest();
 
             // регистрация Data Access
             builder.RegisterType<ApplicationDbContext>().As<DbContext>();
         }
-
     }
 }

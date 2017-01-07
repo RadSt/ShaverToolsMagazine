@@ -46,9 +46,12 @@ namespace ShaverToolsShop.Services
         public List<int> GetDaysInMonth()
         {
             var daysInMonth = new List<int>();
-            for (var i = 0; i <= 31; i++)
+            var day = 1;
+
+            for (var i = 0; i < 31; i++)
             {
-                daysInMonth.Add(i);
+                daysInMonth.Add(day);
+                day++;
             }
 
             return daysInMonth;
