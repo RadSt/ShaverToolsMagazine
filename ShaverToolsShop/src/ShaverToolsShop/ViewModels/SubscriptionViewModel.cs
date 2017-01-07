@@ -10,10 +10,14 @@ namespace ShaverToolsShop.ViewModels
     {
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string CalculateDate { get; set; }
+
         public int FirstDeliveryDay { get; set; }
         public int SecondDeliveryDay { get; set; }
         public SubscriptionType SubscriptionType { get; set; }
         public Guid ProductId { get; set; }
+        public decimal? SubscriptionPrice { get; set; }
+
         public IEnumerable<SelectListItem> ProductsList { get; set; }
         public IEnumerable<SelectListItem> DaysInMonthList { get; set; }
         public List<Subscription> CurrentActiveSubscriptions { get; set; }

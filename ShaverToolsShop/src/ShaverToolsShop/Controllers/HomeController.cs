@@ -33,23 +33,33 @@ namespace ShaverToolsShop.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewSubscription(SubscriptionViewModel subscriptionViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var subscription = new Subscription
-                {
-                    StartDate = subscriptionViewModel.StartDate, 
-                    EndDate = subscriptionViewModel.EndDate,
-                    ProductId = subscriptionViewModel.ProductId,
-                    SubscriptionType = subscriptionViewModel.SubscriptionType,
-                    FirstDeliveryDay = subscriptionViewModel.FirstDeliveryDay,
-                    SecondDeliveryDay = subscriptionViewModel.SecondDeliveryDay
-                };
-                await _subscriptionService.AddNewSubscription(subscription);
-                subscriptionViewModel.CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProducts();
-                return View(subscriptionViewModel);
-            }
+            if (!ModelState.IsValid) return View("Index", subscriptionViewModel);
 
-            return View(subscriptionViewModel);
+            var subscription = new Subscription
+            {
+                StartDate = subscriptionViewModel.StartDate, 
+                EndDate = subscriptionViewModel.EndDate,
+                ProductId = subscriptionViewModel.ProductId,
+                SubscriptionType = subscriptionViewModel.SubscriptionType,
+                FirstDeliveryDay = subscriptionViewModel.FirstDeliveryDay,
+                SecondDeliveryDay = subscriptionViewModel.SecondDeliveryDay
+            };
+            await _subscriptionService.AddNewSubscription(subscription);
+            subscriptionViewModel.CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProducts();
+            return View("Index",subscriptionViewModel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CalculateSubscriptions(SubscriptionViewModel subscriptionViewModel)
+        {
+            if (!ModelState.IsValid) return View("Index", subscriptionViewModel);
+
+            if (subscriptionViewModel.CalculateDate != null)
+                subscriptionViewModel.SubscriptionPrice 
+                    = await _subscriptionService.CalculateSubscriptionsCost(DateTime.Parse(subscriptionViewModel.CalculateDate));
+
+            return View("Index", subscriptionViewModel);
         }
     }
 }

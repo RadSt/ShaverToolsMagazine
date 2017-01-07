@@ -1,15 +1,15 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - ShaverToolsShop</title>
 
-    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet"/>
 </head>
 <body>
-    @*<div class="navbar navbar-inverse navbar-fixed-top">
+@*<div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -29,27 +29,41 @@
             </div>
         </div>
     </div>*@
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2017 - ShaverToolsShop</p>
-        </footer>
-    </div>
+<div class="container body-content">
+    @RenderBody()
+    <hr/>
+    <footer>
+        <p>&copy; 2017 - ShaverToolsShop</p>
+    </footer>
+</div>
 
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-    <script>
-        $('.input-group.date').datepicker({
-            format: "dd.mm.yyyy",
-            language: "ru",
-            forceParse: false,
-            autoclose: true,
-            todayHighlight: true,
-            startDate: '-0d'
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+<script>
+    $('.input-group.date').datepicker({
+        format: "dd.mm.yyyy",
+        language: "ru",
+        forceParse: false,
+        autoclose: true,
+        todayHighlight: true,
+        startDate: '-0d'
+    });
+    (function() {
+        $('#subscriptionType_twiceInMonth').click(function() {
+            $("#secondDeliveryDay").removeClass('hidden');
+
         });
-    </script>
-    @RenderSection("scripts", required: false)
+        $('#subscriptionType_onceInMonth').click(function() {
+
+            $("#secondDeliveryDay").addClass('hidden');
+        });
+        $('#subscriptionType_onceInTwoMonths').click(function() {
+
+            $("#secondDeliveryDay").addClass('hidden');
+        });
+    })();
+</script>
+@RenderSection("scripts", false)
 </body>
 </html>

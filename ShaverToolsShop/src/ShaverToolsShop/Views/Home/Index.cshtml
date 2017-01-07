@@ -1,36 +1,55 @@
 ﻿@using ShaverToolsShop.Conventions.Enums
+@using ShaverToolsShop.Conventions.Extensions
+@using ShaverToolsShop.ViewModels
 @model ShaverToolsShop.ViewModels.SubscriptionViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h2>Оформление подписки</h2>
-<div class="row">
-    <h4>Заказ</h4>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Товар </th>
-            <th>Стоимость</th>
-            <th>Интервал доставки</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-@using (Html.BeginForm("AddNewSubscription", "Home",
-    FormMethod.Post, new {@class = "form-horizontal"}))
+@if (Model.CurrentActiveSubscriptions.Count > 0)
 {
-    <div class="form-group">
+    <div class="row">
+        <h4>Заказ</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Товар </th>
+                <th>Стоимость</th>
+                <th>Интервал доставки</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var subscription in Model.CurrentActiveSubscriptions)
+            {
+                <tr>
+                    <td>@subscription.Product.Name</td>
+                    <td>@subscription.Product.Price</td>
+                    <td>@subscription.SubscriptionType.GetDisplayValue()</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<form asp-controller="Home" asp-action="AddNewSubscription" method="post" class="form-horizontal">
+    @*<div class="form-group">
         <label>Выберите товар и способ доставки</label>
         <div class="col-xs-12">
             <div class="col-xs-6">
                 @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
             </div>
             <div class="col-xs-6">
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth)
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth)
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths)
+                @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
+                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
+                    new {@checked = true, id = "subscriptionType_onceInMonth"})
+                @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
+                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
+                    new {id = "subscriptionType_twiceInMonth"})
+                @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
+                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
+                    new {id = "subscriptionType_onceInTwoMonths"})
             </div>
         </div>
     </div>
@@ -38,10 +57,11 @@
         <label>Выберите день доставки</label>
         <div class="col-xs-12">
             <div class="col-xs-2">
-                <select class="form-control selDay" id="firstDayOfDelivery"></select>
+                @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
             </div>
             <div class="col-xs-2">
-                <select class="form-control selDay" id="secondDayOfDelivery"></select>
+                @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList,
+                    new {@class = "hidden", id = "secondDeliveryDay"})
             </div>
         </div>
     </div>
@@ -49,86 +69,50 @@
         <div class="col-xs-offset-4 col-xs-10">
             <button id="addOrder" type="submit" class="btn btn-default">Добавить товар</button>
         </div>
+    </div>*@
+    <div class="form-group">
+        <label asp-for="FirstDeliveryDay" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="FirstDeliveryDay" class="form-control" />
+            <span asp-validation-for="FirstDeliveryDay" class="text-danger"></span>
+        </div>
     </div>
-}
+    <button type="submit" class="btn btn-default" name="provider">Добавить подписку</button>
+        
+    
+</form>
 
-
-
-@*<form class="form-horizontal">
-        <div class="form-group">
-            <label>Выберите товар и способ доставки</label>
-            <div class="col-xs-12">
-                <div class="col-xs-6">
-                    <select class="form-control" id="itemSelect">
-                        <option value="shaverTool">Бритвенный станок(стоимость 1$)</option>
-                        <option value="shaverGel">Гель для бритья(стоимость 8$)</option>
-                        <option value="shaverAfterShave">Средство после бритья (стоимость 10$)</option>
-                    </select>
-                </div>
-                <div class="col-xs-6">
-                    <label class="radio-inline">
-                        <input type="radio" name="optradio">Раз в два месяца
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="optradio">Раз в месяц
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="optradio">Два раза в месяц
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Выберите день доставки</label>
-            <div class="col-xs-12">
-                <div class="col-xs-2">
-                    <select class="form-control selDay" id="firstDayOfDelivery"></select>
-                </div>
-                <div class="col-xs-2">
-                    <select class="form-control selDay" id="secondDayOfDelivery"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-xs-offset-4 col-xs-10">
-                <button id="addOrder" type="submit" class="btn btn-default">Добавить товар</button>
-            </div>
-        </div>
-    </form>
-</div>*@
 <hr>
-<div class="row">
-    <form class="form-horizontal">
+@using (Html.BeginForm("CalculateSubscriptions", "Home",
+    FormMethod.Post, new {@class = "form-horizontal"}))
+{
+    <div class="form-group">
+        <h4>Расчет</h4>
+        <label for="">На дату</label>
+        <div class="col-xs-12">
+            <div class="col-xs-3">
+                <div class="input-group date">
+                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control"})
+                    <span class="input-group-addon">
+                        <i class="glyphicon glyphicon-th"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-10">
+            <div class="col-xs-2">
+                <button type="submit" class="btn btn-default">Расчитать</button>
+            </div>
+        </div>
+    </div>
+    if (Model.SubscriptionPrice != null)
+    {
         <div class="form-group">
-            <h4>Расчет</h4>
-            <label for="">На дату</label>
             <div class="col-xs-12">
-                <div class="col-xs-3">
-                    <div class="input-group date">
-                        <input type="text" class="form-control"><span class="input-group-addon">
-                            <i class="glyphicon glyphicon-th"></i>
-                        </span>
-                    </div>
-                </div>
+                Стоимость подписки составляет: @Model.SubscriptionPrice
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-xs-10">
-                <div class="col-xs-2">
-                    <button type="submit" class="btn btn-default">Расчитать</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-<div class="row">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>На дату</th>
-            <th>Стоимость</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+    }
+}
