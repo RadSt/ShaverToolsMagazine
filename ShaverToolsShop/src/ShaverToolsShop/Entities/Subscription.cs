@@ -6,11 +6,13 @@ namespace ShaverToolsShop.Entities
 {
     public class Subscription: BaseEntity
     {
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public SubscriptionStatus SubscriptionStatus { get; set; }
         public SubscriptionType SubscriptionType { get; set; }
         public Guid ProductId { get; set; }
-        public Product Product { get; set; }    
+        public Product Product { get; set; }
+        public int SubscriptionFirstDay { get; set; }
+        public int? SubscriptionSecondDay { get; set; }
     }
 }

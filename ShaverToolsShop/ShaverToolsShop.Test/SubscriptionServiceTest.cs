@@ -26,9 +26,8 @@ namespace ShaverToolsShop.Test
                 new Subscription
                 {
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
-                    StartDate = DateTime.Parse("01/01/2017"),
-                    EndDate = DateTime.Parse("03/01/2017"),
-                    SubscriptionType = SubscriptionType.OnceInMonth,
+                    StartDate = DateTime.Parse("01.01.2017"),
+                    SubscriptionFirstDay = 20,
                     Product =
                         new Product
                         {
@@ -50,7 +49,7 @@ namespace ShaverToolsShop.Test
         public async Task ShouldAddSubscription_WhenWeAddSubscription()
         {
             //Arrange
-            var startDate = DateTime.Parse("01/01/2017");
+            var startDate = DateTime.Parse("01.01.2017");
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription))
                 .ReturnsAsync(_subscription);
 
@@ -78,7 +77,7 @@ namespace ShaverToolsShop.Test
         public async Task StartDateMustPassedDate_WhenWeAddSubscription()
         {
             //Arrange
-            var startDate = DateTime.Parse("01/01/2017");
+            var startDate = DateTime.Parse("01.01.2017");
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription))
                 .ReturnsAsync(_subscription);
 
@@ -93,7 +92,7 @@ namespace ShaverToolsShop.Test
         public async Task SubscriptionChangesMustBeSaved_WhenWeStopedSubscription()
         {
             //Arrange
-            var endDate = DateTime.Parse("03/01/2017");
+            var endDate = DateTime.Parse("01.03.2017");
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
 
 
@@ -108,7 +107,7 @@ namespace ShaverToolsShop.Test
         public async Task SubscriptionStatusMustBeStarted_WhenWeAddNewSubscription()
         {
             //Arrange
-            var startDate = DateTime.Parse("01/01/2017");
+            var startDate = DateTime.Parse("01.01.2017");
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
 
             //Act
@@ -136,15 +135,49 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task WeMustGetSubscriptionCost_WhenWeCalculatingAllSubscriptions()
+        public async Task MustReturnOneTimeCost_WhenWeCalculatingSubscriptionOnceAMonthForOneMonthForOneProduct()
         {
             //Arrange
-            var reportDate = DateTime.Parse("02/01/2017");
-            var subscriptionCost = 1;
+            var oneMonthDate = DateTime.Parse("01.02.2017");
+            _subscription.SubscriptionType = SubscriptionType.OnceInMonth;
+            var subscriptionCost = 1M;
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(reportDate);
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
+
+        [Test]
+        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiveAMonthForOneMonthForOneProduct()
+        {
+            //Arrange
+            var oneMonthDate = DateTime.Parse("01.02.2017");
+            _subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
+            _subscription.SubscriptionSecondDay = 28;
+            var subscriptionCost = 2M;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
+
+        [Test]
+        public async Task MustReturnOnceTimeCost_WhenWeCalculatingSubscriptionOnceATwoMonthsForTwoMonthsForOneProduct()
+        {
+            //Arrange
+            var twoMonthsDate = DateTime.Parse("01.03.2017");
+            _subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
+            var subscriptionCost = 1M;
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+
+            //Act
+            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
 
             //Assert
             Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
