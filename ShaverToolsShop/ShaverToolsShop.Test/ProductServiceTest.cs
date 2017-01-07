@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -42,17 +43,17 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task ShouldReturnThreeProducts_WhenWeAskAllProducts()
+        public async Task ShouldReturnThreeProductsList_WhenWeAskAllProductsForSelect()
         {
             //Arrange
             var productsQty = 3;
             _productReadRepository.Setup(x => x.GetAllProducts()).ReturnsAsync(_products);
 
             //Act
-            var results = await _productService.GetAll();
+            var results = await _productService.GetAllForSelect();
 
             //Assert
-            Assert.AreEqual(productsQty, results.Count);
+            Assert.AreEqual(productsQty, results.ToList().Count);
         }
     }
 }

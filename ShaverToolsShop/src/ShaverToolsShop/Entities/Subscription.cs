@@ -12,7 +12,7 @@ namespace ShaverToolsShop.Entities
         public SubscriptionType SubscriptionType { get; set; }
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
-        public int SubscriptionFirstDay { get; set; }
-        public int? SubscriptionSecondDay { get; set; }
+        public int FirstDeliveryDay { get; set; }
+        public int? SecondDeliveryDay { get; set; }
     }
 }

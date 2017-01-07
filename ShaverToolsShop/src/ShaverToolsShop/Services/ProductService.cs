@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Entities;
 
 namespace ShaverToolsShop.Services
 {
-    public class ProductService: BaseService<Product>, IProductService
+    public class ProductService : BaseService<Product>, IProductService
     {
         private readonly IProductReadRepository _productReadRepository;
 
@@ -15,9 +17,17 @@ namespace ShaverToolsShop.Services
             _productReadRepository = productReadRepository;
         }
 
-        public async Task<List<Product>> GetAll()
+        public async Task<IEnumerable<SelectListItem>> GetAllForSelect()
         {
-            return await _productReadRepository.GetAllProducts();
+            var products = await _productReadRepository.GetAllProducts();
+            var productsSelectListItems = products.Select(x =>
+                new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Name
+                });
+
+            return new SelectList(productsSelectListItems, "Value", "Text");
         }
     }
 }

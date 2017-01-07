@@ -27,7 +27,7 @@ namespace ShaverToolsShop.Test
                 {
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
                     StartDate = DateTime.Parse("01.01.2017"),
-                    SubscriptionFirstDay = 20,
+                    FirstDeliveryDay = 20,
                     Product =
                         new Product
                         {
@@ -54,7 +54,7 @@ namespace ShaverToolsShop.Test
                 .ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
             Assert.AreEqual(_subscription.Id, addedSubscription.Id);
@@ -82,7 +82,7 @@ namespace ShaverToolsShop.Test
                 .ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
             Assert.AreEqual(_subscription.StartDate, startDate);
@@ -111,7 +111,7 @@ namespace ShaverToolsShop.Test
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
 
             //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription, startDate);
+            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
             Assert.AreEqual(SubscriptionStatus.Started, addedSubscription.SubscriptionStatus);
@@ -158,7 +158,7 @@ namespace ShaverToolsShop.Test
             //Arrange
             var oneMonthDate = DateTime.Parse("01.02.2017");
             _subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
-            _subscription.SubscriptionSecondDay = 28;
+            _subscription.SecondDeliveryDay = 28;
             var subscriptionCost = 2M;
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 

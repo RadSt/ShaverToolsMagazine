@@ -27,10 +27,9 @@ namespace ShaverToolsShop.Services
                 .GetAllSubscriptionsWithProducts();
         }
 
-        public async Task<Subscription> AddNewSubscription(Subscription subscription, DateTime startDate)
+        public async Task<Subscription> AddNewSubscription(Subscription subscription)
         {
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
-            subscription.EndDate = startDate;
             return await _subscriptionRepository.AddNewSubscription(subscription);
         }
 
@@ -66,7 +65,7 @@ namespace ShaverToolsShop.Services
             {
                 if (!subscription.StartDate.HasValue)
                     return 0;
-                if (subscription.SubscriptionFirstDay == 0)
+                if (subscription.FirstDeliveryDay == 0)
                     return 0;
 
                 if (!subscription.EndDate.HasValue)
@@ -76,18 +75,18 @@ namespace ShaverToolsShop.Services
                 {
                     case SubscriptionType.OnceInTwoMonths:
                         cost = PassedDeliveriesQtyForOnceInTwoMonths(subscription.StartDate.Value
-                            , subscription.EndDate.Value, subscription.SubscriptionFirstDay) 
+                            , subscription.EndDate.Value, subscription.FirstDeliveryDay) 
                             * subscription.Product.Price;
                         break;
                     case SubscriptionType.OnceInMonth:
                         cost = PassedDeliveriesQtyForOnceInMonth(subscription.StartDate.Value
-                           , subscription.EndDate.Value, subscription.SubscriptionFirstDay)
+                           , subscription.EndDate.Value, subscription.FirstDeliveryDay)
                            * subscription.Product.Price;
                         break;
                     case SubscriptionType.TwiceInMonth:
                         cost = PassedDeliveriesQtyForTwiceInMonth(subscription.StartDate.Value
-                           , subscription.EndDate.Value, subscription.SubscriptionFirstDay,
-                           subscription.SubscriptionSecondDay)
+                           , subscription.EndDate.Value, subscription.FirstDeliveryDay,
+                           subscription.SecondDeliveryDay)
                            * subscription.Product.Price;
                         break;
                     default:
