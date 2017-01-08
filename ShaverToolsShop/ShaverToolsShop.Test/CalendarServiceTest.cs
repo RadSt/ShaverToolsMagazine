@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using ShaverToolsShop.Conventions.Enums;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Entities;
@@ -29,6 +31,7 @@ namespace ShaverToolsShop.Test
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c074"),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
+                    SubscriptionType = SubscriptionType.OnceInMonth,
                     FirstDeliveryDay = 20,
                     Product =
                         new Product
@@ -42,6 +45,7 @@ namespace ShaverToolsShop.Test
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c075"),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
+                    SubscriptionType = SubscriptionType.OnceInMonth,
                     FirstDeliveryDay = 25,
                     Product =
                         new Product
@@ -54,6 +58,7 @@ namespace ShaverToolsShop.Test
                 {
                     Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c076"),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
+                    SubscriptionType = SubscriptionType.OnceInMonth,
                     FirstDeliveryDay = 15,
                     Product =
                         new Product
@@ -73,12 +78,15 @@ namespace ShaverToolsShop.Test
             var endDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null);
             var subscriptionsForPeriod = new Dictionary<DateTime, string>
             {
-                { DateTime.ParseExact("20.01.2017", "dd.MM.yyyy", null), "Бритвенный станок" },
-                { DateTime.ParseExact("25.01.2017", "dd.MM.yyyy", null), "Бритвенный станок" },
                 { DateTime.ParseExact("15.01.2017", "dd.MM.yyyy", null), "Бритвенный станок" }
             };
 
-             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProductsByPeriod(startDate, endDate))
+                .ReturnsAsync(_subscriptions.Where(x =>
+                (x.StartDate >= startDate
+                && x.StartDate < endDate)
+                && (x.EndDate > endDate
+                || x.EndDate == null)).ToList());
 
 
             //Act

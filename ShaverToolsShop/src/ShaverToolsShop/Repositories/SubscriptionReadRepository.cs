@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShaverToolsShop.Conventions.Repositories;
@@ -16,5 +18,15 @@ namespace ShaverToolsShop.Repositories
         {
             return GetAll().Include(x=> x.Product).ToListAsync();
         }
+
+        public Task<List<Subscription>> GetAllSubscriptionsWithProductsByPeriod(DateTime startDate, DateTime endDate)
+        {
+            return GetAll().Include(x => x.Product).Where(x =>
+                (x.StartDate >= startDate
+                && x.StartDate < endDate)
+                && (x.EndDate > endDate
+                || x.EndDate == null)).ToListAsync();
+        }
+        
     }
 }
