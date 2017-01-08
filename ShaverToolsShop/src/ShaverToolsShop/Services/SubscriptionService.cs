@@ -83,17 +83,17 @@ namespace ShaverToolsShop.Services
                 switch (subscription.SubscriptionType)
                 {
                     case SubscriptionType.OnceInTwoMonths:
-                        cost = PassedDeliveriesQtyForOnceInTwoMonths(subscription.StartDate.Value
+                        cost += PassedDeliveriesQtyForOnceInTwoMonths(subscription.StartDate.Value
                             , subscription.EndDate.Value, subscription.FirstDeliveryDay) 
                             * subscription.Product.Price;
                         break;
                     case SubscriptionType.OnceInMonth:
-                        cost = PassedDeliveriesQtyForOnceInMonth(subscription.StartDate.Value
+                        cost += PassedDeliveriesQtyForOnceInMonth(subscription.StartDate.Value
                            , subscription.EndDate.Value, subscription.FirstDeliveryDay)
                            * subscription.Product.Price;
                         break;
                     case SubscriptionType.TwiceInMonth:
-                        cost = PassedDeliveriesQtyForTwiceInMonth(subscription.StartDate.Value
+                        cost += PassedDeliveriesQtyForTwiceInMonth(subscription.StartDate.Value
                            , subscription.EndDate.Value, subscription.FirstDeliveryDay,
                            subscription.SecondDeliveryDay)
                            * subscription.Product.Price;
