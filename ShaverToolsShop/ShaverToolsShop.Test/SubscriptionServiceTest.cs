@@ -37,7 +37,48 @@ namespace ShaverToolsShop.Test
                         }
                 };
 
-            _subscriptions = new List<Subscription> {_subscription};
+
+            _subscriptions = new List<Subscription>
+            {
+                new Subscription
+                {
+                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c074"),
+                    StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
+                    EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
+                    FirstDeliveryDay = 20,
+                    Product =
+                        new Product
+                        {
+                            Name = "Бритвенный станок",
+                            Price = 1
+                        }
+                },
+                new Subscription
+                {
+                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c075"),
+                    StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
+                    EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
+                    FirstDeliveryDay = 25,
+                    Product =
+                        new Product
+                        {
+                            Name = "Бритвенный станок",
+                            Price = 1
+                        }
+                },
+                new Subscription
+                {
+                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c076"),
+                    StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
+                    FirstDeliveryDay = 15,
+                    Product =
+                        new Product
+                        {
+                            Name = "Бритвенный станок",
+                            Price = 1
+                        }
+                },
+            };
         }
 
         private Mock<ISubscriptionReadRepository> _subscriptionReadRepository;
@@ -51,10 +92,12 @@ namespace ShaverToolsShop.Test
         {
             //Arrange
             var twoMonthsDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
-             _subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
-            var subscriptionCost = 1M;
+            var subscriptionCost = 3M;
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
+            }
             //Act
             var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
 
@@ -67,8 +110,11 @@ namespace ShaverToolsShop.Test
         {
             //Arrange
             var oneMonthDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null);
-            _subscription.SubscriptionType = SubscriptionType.OnceInMonth;
-            var subscriptionCost = 1M;
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.SubscriptionType = SubscriptionType.OnceInMonth;
+            }
+            var subscriptionCost = 3M;
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
@@ -79,13 +125,16 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiveAMonthForOneMonthForOneProduct()
+        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiceAMonthForOneMonthForOneProduct()
         {
             //Arrange
             var oneMonthDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null);
-            _subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
-            _subscription.SecondDeliveryDay = 28;
-            var subscriptionCost = 2M;
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
+                subscription.SecondDeliveryDay = 28;
+            }
+            var subscriptionCost = 6M;
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
@@ -110,16 +159,18 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task ShouldReturnSubscriptionsWithProducts_WhenWeAskAllSubscriptionsWithProducts()
+        public async Task ShouldReturnSubscriptionsWithProductsBeforeEndDate_WhenWeAskAllSubscriptionsWithProductsBeforeEndDate()
         {
             //Arrange
+            var addedDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
+            var filteredByEndDateSubscriptions = _subscriptions.Where(x => x.EndDate > addedDate);
             _subscriptionReadRepository.Setup(x => x.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
             var result = await _subscriptionService.GetAllWithProducts();
 
             //Assert
-            Assert.AreEqual(_subscriptions, result);
+            Assert.AreEqual(filteredByEndDateSubscriptions, result);
         }
 
         [Test]
