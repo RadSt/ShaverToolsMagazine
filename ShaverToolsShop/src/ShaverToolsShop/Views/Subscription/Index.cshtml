@@ -6,7 +6,7 @@
 }
 
 <h2>Оформление подписки</h2>
-@using (Html.BeginForm("CalculateSubscriptions", "Home",
+@using (Html.BeginForm("CalculateSubscriptions", "Subscription",
     FormMethod.Post, new {@class = "form-horizontal"}))
 {
     <div class="form-group">
@@ -67,7 +67,7 @@
                             }
                         </td>
                         <td>
-                            @using (Html.BeginForm("StopSubscriptions", "Home", new
+                            @using (Html.BeginForm("StopSubscriptions", "Subscription", new
                             {
                                 subscriptionId = subscription.Id
                             }, FormMethod.Post))
@@ -85,7 +85,7 @@
     </div>
 }
 <hr/>
-@using (Html.BeginForm("AddNewSubscription", "Home",
+@using (Html.BeginForm("AddNewSubscription", "Subscription",
     FormMethod.Post, new {@class = "form-horizontal"}))
 {
     <div class="form-group">

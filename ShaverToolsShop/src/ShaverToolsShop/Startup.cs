@@ -55,7 +55,7 @@ namespace ShaverToolsShop
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Subscription/Error");
             }
 
             app.UseStaticFiles();
@@ -64,7 +64,7 @@ namespace ShaverToolsShop
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Subscription}/{action=Index}/{id?}");
             });
         }
     }

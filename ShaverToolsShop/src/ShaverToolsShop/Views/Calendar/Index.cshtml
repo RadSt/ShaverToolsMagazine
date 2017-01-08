@@ -1,0 +1,54 @@
+﻿@using ShaverToolsShop.ViewModels
+@model ShaverToolsShop.ViewModels.CalendarViewModel
+
+@{
+    var selectedMonth = Model.SelectedMonth;
+    var prevMonth = selectedMonth.AddDays(-1);
+    var nextMonth = selectedMonth.AddDays(32);
+}
+
+<h3 class="disposition-calendar">
+    @Html.ActionLink("Предыдущий", "Index","Calendar", new { selectedDate = prevMonth },new {@class = "disposition-calendar-previous-month" })
+    @Model.SelectedMonth.ToString("MMMM yyyy")
+    @Html.ActionLink("Следующий", "Index", "Calendar", new { selectedDate = nextMonth },new { @class = "disposition-calendar-next-month" })
+
+</h3>
+
+Add a comment to this line
+<table class="disposition-calendar">
+    <thead>
+    <tr>
+        <td>пн</td>
+        <td>вт</td>
+        <td>ср</td>
+        <td>чт</td>
+        <td>пт</td>
+        <td>сб</td>
+        <td>вс</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var week in Model.WeeksData)
+    {
+        <tr>
+            @foreach (var
+                day in
+                week)
+            {
+                if (day.Day == null)
+                {
+                    <td class="non-date"/>
+                }
+                else
+                {
+                    <td>
+                        <div class="text-left disposition-calendar-date"> day.Day </div>
+                        <div class="disposition-calendar-sum">@day.ProductName </div >
+                    </td>
+                }
+            }
+        </tr>
+    }
+    </tbody>
+</table>

@@ -8,12 +8,12 @@ using ShaverToolsShop.ViewModels;
 
 namespace ShaverToolsShop.Controllers
 {
-    public class HomeController : Controller
+    public class SubscriptionController : Controller
     {
         private readonly IProductService _productService;
         private readonly ISubscriptionService _subscriptionService;
 
-        public HomeController(ISubscriptionService subscriptionService, IProductService productService)
+        public SubscriptionController(ISubscriptionService subscriptionService, IProductService productService)
         {
             _subscriptionService = subscriptionService;
             _productService = productService;
