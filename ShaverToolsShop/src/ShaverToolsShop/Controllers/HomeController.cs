@@ -21,7 +21,8 @@ namespace ShaverToolsShop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var subscriptionViewModel = await GetSubscriptionViewModel();
+            var todayDate = DateTime.Now;
+            var subscriptionViewModel = await GetSubscriptionViewModel(todayDate);
             subscriptionViewModel.SubscriptionType = SubscriptionType.OnceInMonth;
             return View(subscriptionViewModel);
         }
@@ -32,18 +33,18 @@ namespace ShaverToolsShop.Controllers
             string startDate)
         {
             if (!ModelState.IsValid) return View("Index", subscriptionViewModel);
+            var todayDate = DateTime.ParseExact(startDate, "dd.MM.yyyy", null);
 
             var subscription = new Subscription
             {
-                StartDate = DateTime.ParseExact(startDate, "dd.MM.yyyy", null),
+                StartDate = todayDate,
                 ProductId = subscriptionViewModel.ProductId,
                 SubscriptionType = subscriptionViewModel.SubscriptionType,
                 FirstDeliveryDay = subscriptionViewModel.FirstDeliveryDay,
                 SecondDeliveryDay = subscriptionViewModel.SecondDeliveryDay
             };
             await _subscriptionService.AddNewSubscription(subscription);
-            subscriptionViewModel = await GetSubscriptionViewModel();
-            subscriptionViewModel.CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProducts();
+            subscriptionViewModel = await GetSubscriptionViewModel(todayDate);
             return View("Index", subscriptionViewModel);
         }
 
@@ -51,33 +52,36 @@ namespace ShaverToolsShop.Controllers
         [HttpPost]
         public async Task<IActionResult> CalculateSubscriptions(SubscriptionViewModel subscriptionViewModel)
         {
+            var todayDate = DateTime.ParseExact(subscriptionViewModel.CalculateDate, "dd.MM.yyyy", null);
+
             if (!ModelState.IsValid) return View("Index", subscriptionViewModel);
-            var newSubscriptionViewModel = await GetSubscriptionViewModel();
+            var newSubscriptionViewModel = await GetSubscriptionViewModel(todayDate);
 
             if (subscriptionViewModel.CalculateDate != null)
                 newSubscriptionViewModel.SubscriptionPrice
                     =
                     await _subscriptionService.CalculateSubscriptionsCost(
-                        DateTime.ParseExact(subscriptionViewModel.CalculateDate, "dd.MM.yyyy", null));
+                       todayDate);
             return View("Index", newSubscriptionViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> StopSubscriptions(string endDate, Guid subscriptionId)
         {
-            await _subscriptionService.StoppedSubscription(subscriptionId,
-                DateTime.ParseExact(endDate, "dd.MM.yyyy", null));
+            var todayDate = DateTime.ParseExact(endDate, "dd.MM.yyyy", null);
 
-            var newSubscriptionViewModel = await GetSubscriptionViewModel();
+            await _subscriptionService.StoppedSubscription(subscriptionId, todayDate);
+
+            var newSubscriptionViewModel = await GetSubscriptionViewModel(todayDate);
             return View("Index", newSubscriptionViewModel);
         }
 
         [NonAction]
-        private async Task<SubscriptionViewModel> GetSubscriptionViewModel()
+        private async Task<SubscriptionViewModel> GetSubscriptionViewModel(DateTime todayDate)
         {
             var subscriptionViewModel = new SubscriptionViewModel
             {
-                CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProducts(),
+                CurrentActiveSubscriptions = await _subscriptionService.GetAllWithProductsWithNotExpiredDate(todayDate),
                 ProductsList = await _productService.GetAllForSelect(),
                 DaysInMonthList = _subscriptionService.GetDaysInMonthSelectList(),
                 SubscriptionType = SubscriptionType.OnceInMonth,

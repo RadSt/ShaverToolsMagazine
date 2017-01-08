@@ -162,12 +162,12 @@ namespace ShaverToolsShop.Test
         public async Task ShouldReturnSubscriptionsWithProductsBeforeEndDate_WhenWeAskAllSubscriptionsWithProductsBeforeEndDate()
         {
             //Arrange
-            var addedDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
-            var filteredByEndDateSubscriptions = _subscriptions.Where(x => x.EndDate > addedDate);
+            var todayDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
+            var filteredByEndDateSubscriptions = _subscriptions.Where(x => x.EndDate == null || x.EndDate > todayDate).ToList();
             _subscriptionReadRepository.Setup(x => x.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
 
             //Act
-            var result = await _subscriptionService.GetAllWithProducts();
+            var result = await _subscriptionService.GetAllWithProductsWithNotExpiredDate(todayDate);
 
             //Assert
             Assert.AreEqual(filteredByEndDateSubscriptions, result);
