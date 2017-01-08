@@ -6,10 +6,9 @@ using ShaverToolsShop.Entities;
 
 namespace ShaverToolsShop.ViewModels
 {
-    public struct SubscriptionViewModel
+    public class SubscriptionViewModel
     {
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public string EndDate { get; set; }
         public string CalculateDate { get; set; }
 
         public int FirstDeliveryDay { get; set; }

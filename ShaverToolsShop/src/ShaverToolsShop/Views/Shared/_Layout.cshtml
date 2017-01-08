@@ -52,16 +52,17 @@
     (function() {
         $('#subscriptionType_twiceInMonth').click(function() {
             $("#secondDeliveryDay").removeClass('hidden');
-
         });
         $('#subscriptionType_onceInMonth').click(function() {
-
             $("#secondDeliveryDay").addClass('hidden');
         });
         $('#subscriptionType_onceInTwoMonths').click(function() {
-
             $("#secondDeliveryDay").addClass('hidden');
         });
+
+        $('#CalculateDate').change(function () {
+            $("#EndDate").val($('#CalculateDate').val());
+        }); 
     })();
 </script>
 @RenderSection("scripts", false)

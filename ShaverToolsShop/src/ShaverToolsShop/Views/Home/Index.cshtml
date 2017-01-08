@@ -1,7 +1,7 @@
 ﻿@using ShaverToolsShop.Conventions.Enums
 @using ShaverToolsShop.Conventions.Extensions
 @using ShaverToolsShop.ViewModels
-@model ShaverToolsShop.ViewModels.SubscriptionViewModel
+@model SubscriptionViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -13,28 +13,39 @@
         <h4>Заказ</h4>
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th>Товар </th>
-                <th>Стоимость</th>
-                <th>Интервал доставки</th>
-            </tr>
+                <tr>
+                    <th>Товар </th>
+                    <th>Стоимость</th>
+                    <th>Интервал доставки</th>
+                </tr>
             </thead>
             <tbody>
             @foreach (var subscription in Model.CurrentActiveSubscriptions)
             {
-                <tr>
-                    <td>@subscription.Product.Name</td>
-                    <td>@subscription.Product.Price</td>
-                    <td>@subscription.SubscriptionType.GetDisplayValue()</td>
-                </tr>
+                using (Html.BeginForm("StopSubscriptions", "Home",  
+                    new { subscriptionId = subscription.Id, endDate = Model.EndDate }, FormMethod.Post))
+                {
+                    <tr>
+                        <td>@subscription.Product.Name</td>
+                        <td>@subscription.Product.Price</td>
+                        <td>@subscription.SubscriptionType.GetDisplayValue()</td>
+                        <td>
+                            <input type="submit" value="Удалить" id="Submit" class="btn btn-default" />
+                        </td>
+                    </tr>
+                }
+                       // @Html.TextBox(Model.EndDate, Model.EndDate, new { @class = "hidden"})
+
             }
             </tbody>
         </table>
     </div>
 }
 
-<form asp-controller="Home" asp-action="AddNewSubscription" method="post" class="form-horizontal">
-    @*<div class="form-group">
+@using(Html.BeginForm("AddNewSubscription", "Home",
+    FormMethod.Post, new {@class = "form-horizontal"}))
+{
+    <div class="form-group">
         <label>Выберите товар и способ доставки</label>
         <div class="col-xs-12">
             <div class="col-xs-6">
@@ -43,13 +54,13 @@
             <div class="col-xs-6">
                 @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
                 @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
-                    new {@checked = true, id = "subscriptionType_onceInMonth"})
+               new { @checked = true, id = "subscriptionType_onceInMonth"})
                 @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
                 @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
-                    new {id = "subscriptionType_twiceInMonth"})
+               new { id = "subscriptionType_twiceInMonth" })
                 @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
                 @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
-                    new {id = "subscriptionType_onceInTwoMonths"})
+               new { id = "subscriptionType_onceInTwoMonths" })
             </div>
         </div>
     </div>
@@ -57,11 +68,11 @@
         <label>Выберите день доставки</label>
         <div class="col-xs-12">
             <div class="col-xs-2">
-                @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+               @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
             </div>
             <div class="col-xs-2">
-                @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList,
-                    new {@class = "hidden", id = "secondDeliveryDay"})
+               @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList,
+              new {@class = "hidden", id = "secondDeliveryDay" })
             </div>
         </div>
     </div>
@@ -69,22 +80,12 @@
         <div class="col-xs-offset-4 col-xs-10">
             <button id="addOrder" type="submit" class="btn btn-default">Добавить товар</button>
         </div>
-    </div>*@
-    <div class="form-group">
-        <label asp-for="FirstDeliveryDay" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="FirstDeliveryDay" class="form-control" />
-            <span asp-validation-for="FirstDeliveryDay" class="text-danger"></span>
-        </div>
     </div>
-    <button type="submit" class="btn btn-default" name="provider">Добавить подписку</button>
-        
-    
-</form>
+}
 
 <hr>
 @using (Html.BeginForm("CalculateSubscriptions", "Home",
-    FormMethod.Post, new {@class = "form-horizontal"}))
+                FormMethod.Post, new { @class = "form-horizontal" }))
 {
     <div class="form-group">
         <h4>Расчет</h4>
@@ -92,7 +93,7 @@
         <div class="col-xs-12">
             <div class="col-xs-3">
                 <div class="input-group date">
-                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control"})
+                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control" })
                     <span class="input-group-addon">
                         <i class="glyphicon glyphicon-th"></i>
                     </span>
@@ -111,7 +112,7 @@
     {
         <div class="form-group">
             <div class="col-xs-12">
-                Стоимость подписки составляет: @Model.SubscriptionPrice
+               Стоимость подписки составляет: @Model.SubscriptionPrice
             </div>
         </div>
     }
