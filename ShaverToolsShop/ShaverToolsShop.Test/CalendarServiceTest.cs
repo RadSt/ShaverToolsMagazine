@@ -97,28 +97,39 @@ namespace ShaverToolsShop.Test
             Assert.AreEqual(subscriptionsForPeriod, result);
         }
         [Test]
-        public async Task ShouldReturnDaysInCurrentMonthsWithSubscriptionForMonth_WhenWeAskGetSubscriptionCalendarForMonth()
+        public async Task ShouldReturnDaysWithProductNameFromPeriod_WhenWeAskGetSubscriptionCalendarForMonth()
         {
             //Arrange
             var startDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null);
-            var endDate = new DateTime(startDate.Year, startDate.AddMonths(1).Month, 1);
+            var daysInMonth = DateTime.DaysInMonth(startDate.Year, startDate.Month);
+            var endDate = startDate.AddDays(daysInMonth);
+            var selectedProduct = _subscriptions.Where(x =>
+                (x.StartDate >= startDate
+                 && x.StartDate < endDate)
+                && (x.EndDate > endDate
+                    || x.EndDate == null)).ToList();
 
-            var subscriptionMonthCalendar = new CalendarViewModel();
-          
+            var result = false;
+
 
             _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProductsByPeriod(startDate, endDate))
-               .ReturnsAsync(_subscriptions.Where(x =>
-               (x.StartDate >= startDate
-               && x.StartDate < endDate)
-               && (x.EndDate > endDate
-               || x.EndDate == null)).ToList());
+               .ReturnsAsync(selectedProduct);
 
 
             //Act
-            var result = await _calendarService.GetSubscriptionMonthCalendar(startDate, endDate);
+            var subscriptionDays = await _calendarService.GetSubscriptionMonthCalendar(startDate);
+            foreach (var week in subscriptionDays.WeeksData)
+            {
+                foreach (var day in week)
+                {
+                    if (selectedProduct.Any(x => x.Product.Name == day.ProductName))
+                        result = true;
+                }
+            }
+
 
             //Assert
-            Assert.AreEqual(subscriptionMonthCalendar, result);
+            Assert.AreEqual(true, result);
         }
     }
 }
