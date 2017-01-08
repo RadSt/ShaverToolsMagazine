@@ -8,9 +8,7 @@ namespace ShaverToolsShop.ViewModels
 {
     public class SubscriptionViewModel
     {
-        public string EndDate { get; set; }
         public string CalculateDate { get; set; }
-
         public int FirstDeliveryDay { get; set; }
         public int SecondDeliveryDay { get; set; }
         public SubscriptionType SubscriptionType { get; set; }

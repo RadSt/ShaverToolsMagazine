@@ -1,110 +1,27 @@
 ﻿@using ShaverToolsShop.Conventions.Enums
 @using ShaverToolsShop.Conventions.Extensions
-@using ShaverToolsShop.ViewModels
-@model SubscriptionViewModel
+@model ShaverToolsShop.ViewModels.SubscriptionViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h2>Оформление подписки</h2>
-@if (Model.CurrentActiveSubscriptions.Count > 0)
-{
-    <div class="row">
-        <h4>Заказ</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Товар </th>
-                    <th>Стоимость</th>
-                    <th>Интервал доставки</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var subscription in Model.CurrentActiveSubscriptions)
-            {
-                using (Html.BeginForm("StopSubscriptions", "Home",  
-                    new { subscriptionId = subscription.Id, endDate = Model.EndDate }, FormMethod.Post))
-                {
-                    <tr>
-                        <td>@subscription.Product.Name</td>
-                        <td>@subscription.Product.Price</td>
-                        <td>@subscription.SubscriptionType.GetDisplayValue()</td>
-                        <td>
-                            <input type="submit" value="Удалить" id="Submit" class="btn btn-default" />
-                        </td>
-                    </tr>
-                }
-                       // @Html.TextBox(Model.EndDate, Model.EndDate, new { @class = "hidden"})
-
-            }
-            </tbody>
-        </table>
-    </div>
-}
-
-@using(Html.BeginForm("AddNewSubscription", "Home",
+@using (Html.BeginForm("CalculateSubscriptions", "Home",
     FormMethod.Post, new {@class = "form-horizontal"}))
 {
     <div class="form-group">
-        <label>Выберите товар и способ доставки</label>
-        <div class="col-xs-12">
-            <div class="col-xs-6">
-                @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
-            </div>
-            <div class="col-xs-6">
-                @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
-               new { @checked = true, id = "subscriptionType_onceInMonth"})
-                @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
-               new { id = "subscriptionType_twiceInMonth" })
-                @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
-                @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
-               new { id = "subscriptionType_onceInTwoMonths" })
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Выберите день доставки</label>
-        <div class="col-xs-12">
-            <div class="col-xs-2">
-               @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
-            </div>
-            <div class="col-xs-2">
-               @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList,
-              new {@class = "hidden", id = "secondDeliveryDay" })
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-offset-4 col-xs-10">
-            <button id="addOrder" type="submit" class="btn btn-default">Добавить товар</button>
-        </div>
-    </div>
-}
-
-<hr>
-@using (Html.BeginForm("CalculateSubscriptions", "Home",
-                FormMethod.Post, new { @class = "form-horizontal" }))
-{
-    <div class="form-group">
-        <h4>Расчет</h4>
-        <label for="">На дату</label>
+        <label for="">Выберите текущую дату расчета и создания подписки</label>
         <div class="col-xs-12">
             <div class="col-xs-3">
                 <div class="input-group date">
-                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control" })
+                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control"})
                     <span class="input-group-addon">
                         <i class="glyphicon glyphicon-th"></i>
                     </span>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-10">
-            <div class="col-xs-2">
-                <button type="submit" class="btn btn-default">Расчитать</button>
+            <div>
+                <button type="submit" class="btn btn-default">Расчитать стоимость</button>
             </div>
         </div>
     </div>
@@ -112,8 +29,148 @@
     {
         <div class="form-group">
             <div class="col-xs-12">
-               Стоимость подписки составляет: @Model.SubscriptionPrice
+                Стоимость подписки составляет: @Model.SubscriptionPrice
             </div>
         </div>
     }
+}
+@if (Model.CurrentActiveSubscriptions.Count > 0)
+{
+    <div class="row">
+        <h4 class="text-center">Подписки</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Товар </th>
+                <th>Стоимость</th>
+                <th>Интервал доставки</th>
+                <th>Дата начала подписки</th>
+                <th>Интервал окончания подписки</th>
+                <th>Первый день доставки</th>
+                <th>Второй день доставки</th>
+            </tr>
+            </thead>
+            @foreach (var subscription in Model.CurrentActiveSubscriptions)
+            {
+                  <tbody>
+                    <tr>
+                        <td>@subscription.Product.Name</td>
+                        <td>@subscription.Product.Price</td>
+                        <td>@subscription.SubscriptionType.GetDisplayValue()</td>
+                        <td>@subscription.StartDate</td>
+                        <td>@subscription.EndDate</td>
+                        <td>@subscription.FirstDeliveryDay</td>
+                        <td>
+                            @if (subscription.SubscriptionType == SubscriptionType.TwiceInMonth)
+                            {
+                                @subscription.SecondDeliveryDay
+                            }
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("StopSubscriptions", "Home", new
+                            {
+                                subscriptionId = subscription.Id
+                            }, FormMethod.Post))
+                            {
+                            @Html.TextBox("EndDate","", new { @class = "end-date hidden" })
+                            <input type="submit" value="Удалить" id="Submit" class="btn btn-default"/>
+                            }
+
+                        </td>
+                    </tr>
+                  
+                    </tbody>
+            }
+        </table>
+    </div>
+}
+<hr/>
+@using (Html.BeginForm("AddNewSubscription", "Home",
+    FormMethod.Post, new {@class = "form-horizontal"}))
+{
+    <div class="form-group">
+        <div class="col-xs-12">
+            <div class="col-xs-6">
+                <label>Выберите товар</label>
+                <div>
+                    @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <label>Выберите способ доставки</label>
+                <div>
+                    @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
+                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
+                        new {@checked = true, id = "subscriptionType_onceInMonth"})
+                    @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
+                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
+                        new {id = "subscriptionType_twiceInMonth"})
+                    @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
+                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
+                        new {id = "subscriptionType_onceInTwoMonths"})
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-12">
+            <div class="col-xs-2">
+                <label>Первая дата доставки</label>
+                <div>
+                    @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+                </div>
+            </div>
+            <div id="secondDeliveryDay" class="col-xs-2 hidden">
+                <label>Вторая дата доставки</label>
+                <div>
+                    @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        @Html.TextBox("StartDate", "", new { @class = "start-date hidden" })
+    </div>
+    <div class="form-group">
+        <div class="col-xs-offset-4 col-xs-10">
+            <button id="addOrder" type="submit" class="btn btn-default">Добавить подписку</button>
+        </div>
+    </div>
+}
+
+@section scripts{
+<script>
+    $('.input-group.date').datepicker({
+        format: "dd.mm.yyyy",
+        language: "ru",
+        forceParse: false,
+        autoclose: true,
+        todayHighlight: true,
+        startDate: '-0d'
+    });
+    (function () {
+        initDate();
+
+        $('#subscriptionType_twiceInMonth').click(function() {
+            $("#secondDeliveryDay").removeClass('hidden');
+        });
+        $('#subscriptionType_onceInMonth').click(function() {
+            $("#secondDeliveryDay").addClass('hidden');
+        });
+        $('#subscriptionType_onceInTwoMonths').click(function() {
+            $("#secondDeliveryDay").addClass('hidden');
+        });
+
+        $('#CalculateDate').change(function () {
+            initDate();
+        });
+
+        function initDate() {
+            var calculationDate = $('#CalculateDate').val();
+            $(".end-date").val(calculationDate);
+            $(".start-date").val(calculationDate);
+        }
+
+    })();
+</script>
 }

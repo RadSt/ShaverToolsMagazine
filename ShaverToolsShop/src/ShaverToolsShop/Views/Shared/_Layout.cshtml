@@ -40,31 +40,7 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-<script>
-    $('.input-group.date').datepicker({
-        format: "dd.mm.yyyy",
-        language: "ru",
-        forceParse: false,
-        autoclose: true,
-        todayHighlight: true,
-        startDate: '-0d'
-    });
-    (function() {
-        $('#subscriptionType_twiceInMonth').click(function() {
-            $("#secondDeliveryDay").removeClass('hidden');
-        });
-        $('#subscriptionType_onceInMonth').click(function() {
-            $("#secondDeliveryDay").addClass('hidden');
-        });
-        $('#subscriptionType_onceInTwoMonths').click(function() {
-            $("#secondDeliveryDay").addClass('hidden');
-        });
-
-        $('#CalculateDate').change(function () {
-            $("#EndDate").val($('#CalculateDate').val());
-        }); 
-    })();
-</script>
+<script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
 @RenderSection("scripts", false)
 </body>
 </html>
