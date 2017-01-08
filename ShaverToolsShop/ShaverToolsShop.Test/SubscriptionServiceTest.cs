@@ -77,7 +77,7 @@ namespace ShaverToolsShop.Test
                             Name = "Бритвенный станок",
                             Price = 1
                         }
-                },
+                }
             };
         }
 
