@@ -9,6 +9,7 @@ using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
 using ShaverToolsShop.Entities;
 using ShaverToolsShop.Services;
+using ShaverToolsShop.ViewModels;
 
 namespace ShaverToolsShop.Test
 {
@@ -94,6 +95,30 @@ namespace ShaverToolsShop.Test
 
             //Assert
             Assert.AreEqual(subscriptionsForPeriod, result);
+        }
+        [Test]
+        public async Task ShouldReturnDaysInCurrentMonthsWithSubscriptionForMonth_WhenWeAskGetSubscriptionCalendarForMonth()
+        {
+            //Arrange
+            var startDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null);
+            var endDate = new DateTime(startDate.Year, startDate.AddMonths(1).Month, 1);
+
+            var subscriptionMonthCalendar = new CalendarViewModel();
+          
+
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProductsByPeriod(startDate, endDate))
+               .ReturnsAsync(_subscriptions.Where(x =>
+               (x.StartDate >= startDate
+               && x.StartDate < endDate)
+               && (x.EndDate > endDate
+               || x.EndDate == null)).ToList());
+
+
+            //Act
+            var result = await _calendarService.GetSubscriptionMonthCalendar(startDate, endDate);
+
+            //Assert
+            Assert.AreEqual(subscriptionMonthCalendar, result);
         }
     }
 }
