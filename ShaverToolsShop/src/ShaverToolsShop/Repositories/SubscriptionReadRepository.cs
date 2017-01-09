@@ -22,9 +22,8 @@ namespace ShaverToolsShop.Repositories
         public Task<List<Subscription>> GetAllSubscriptionsWithProductsByPeriod(DateTime startDate, DateTime endDate)
         {
             return GetAll().Include(x => x.Product).Where(x =>
-                (x.StartDate >= startDate
-                && x.StartDate < endDate)
-                && (x.EndDate > endDate
+                (x.StartDate < endDate)
+                && (x.EndDate >= startDate
                 || x.EndDate == null)).ToListAsync();
         }
         

@@ -25,7 +25,7 @@ namespace ShaverToolsShop.Services
             var subscriptions = await _subscriptionReadRepository
                 .GetAllSubscriptionsWithProductsByPeriod(startDate, endDate);
 
-            var subscriptionsByDays = new Dictionary<DateTime, string>();
+            var subscriptionsByDays = new List<CalendarDayModel>();
 
             foreach (var subscription in subscriptions)
                 switch (subscription.SubscriptionType)
@@ -34,17 +34,18 @@ namespace ShaverToolsShop.Services
                         subscriptionsByDays.AddRange(GetsubscriptionsByDaysForOnceInTwoMonths(subscription, startDate));
                         break;
                     case SubscriptionType.OnceInMonth:
-                        subscriptionsByDays.AddRange(GetsubscriptionsByDaysForOnceInMonth(subscription, startDate));
+                        subscriptionsByDays.AddRange(GetsubscriptionsByDaysForOnceInMonth(subscription));
                         break;
                     case SubscriptionType.TwiceInMonth:
-                        subscriptionsByDays.AddRange(GetsubscriptionsByDaysForTwiceInMonth(subscription, startDate));
+                        subscriptionsByDays.AddRange(GetsubscriptionsByDaysForTwiceInMonth(subscription));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
+            var subscriptionsByDaysDict = GetSubscriptionsByDaysDict(startDate, subscriptionsByDays);
 
-            return subscriptionsByDays;
+            return subscriptionsByDaysDict;
         }
 
         public async Task<CalendarViewModel> GetSubscriptionMonthCalendar(DateTime startDate)
@@ -93,6 +94,7 @@ namespace ShaverToolsShop.Services
             return model;
         }
 
+        #region Private
         private int GetDayOfWeek(DateTime dt)
         {
             switch (dt.DayOfWeek)
@@ -109,22 +111,22 @@ namespace ShaverToolsShop.Services
             return 0;
         }
 
-        private Dictionary<DateTime, string> GetsubscriptionsByDaysForOnceInTwoMonths(Subscription subscription,
+        private IEnumerable<CalendarDayModel> GetsubscriptionsByDaysForOnceInTwoMonths(Subscription subscription,
             DateTime startDate)
         {
-            if (subscription.StartDate == null) return new Dictionary<DateTime, string>();
+            if (subscription.StartDate == null) return new List<CalendarDayModel>();
 
             var months = Math.Abs(subscription.StartDate.Value.Month - startDate.Month + 12 *
                                   (subscription.StartDate.Value.Year - startDate.Year));
             if (IsEven(months))
-                return new Dictionary<DateTime, string>
+                return new List<CalendarDayModel>
                 {
-                    {
-                        new DateTime(startDate.Year, startDate.Month, subscription.FirstDeliveryDay),
-                        subscription.Product.Name
-                    }
+                   new CalendarDayModel{
+                        Day = subscription.FirstDeliveryDay,
+                        ProductName = subscription.Product.Name
+                    },
                 };
-            return new Dictionary<DateTime, string>();
+            return new List<CalendarDayModel>();
         }
 
         private bool IsEven(int months)
@@ -132,34 +134,47 @@ namespace ShaverToolsShop.Services
             return months % 2 == 0;
         }
 
-        private Dictionary<DateTime, string> GetsubscriptionsByDaysForTwiceInMonth(Subscription subscription,
-            DateTime startDate)
+        private IEnumerable<CalendarDayModel> GetsubscriptionsByDaysForTwiceInMonth(Subscription subscription)
         {
             if (subscription.SecondDeliveryDay != null)
-                return new Dictionary<DateTime, string>
+                return new List<CalendarDayModel>
                 {
-                    {
-                        new DateTime(startDate.Year, startDate.Month, subscription.FirstDeliveryDay),
-                        subscription.Product.Name
+                    new CalendarDayModel{
+                        Day = subscription.FirstDeliveryDay,
+                        ProductName = subscription.Product.Name
                     },
-                    {
-                        new DateTime(startDate.Year, startDate.Month, subscription.SecondDeliveryDay.Value),
-                        subscription.Product.Name
+                    new CalendarDayModel{
+                        Day = subscription.SecondDeliveryDay,
+                        ProductName = subscription.Product.Name
                     }
                 };
-            return new Dictionary<DateTime, string>();
+            return new List<CalendarDayModel>();
         }
 
-        private Dictionary<DateTime, string> GetsubscriptionsByDaysForOnceInMonth(Subscription subscription,
-            DateTime startDate)
+        private IEnumerable<CalendarDayModel> GetsubscriptionsByDaysForOnceInMonth(Subscription subscription)
         {
-            return new Dictionary<DateTime, string>
-            {
+            return new List<CalendarDayModel>
                 {
-                    new DateTime(startDate.Year, startDate.Month, subscription.FirstDeliveryDay),
-                    subscription.Product.Name
-                }
-            };
+                    new CalendarDayModel{
+                        Day = subscription.FirstDeliveryDay,
+                        ProductName = subscription.Product.Name
+                    }
+
+                };
         }
+        private Dictionary<DateTime, string> GetSubscriptionsByDaysDict(DateTime startDate, List<CalendarDayModel> subscriptionsByDays)
+        {
+            var subscriptionsByDaysDict = subscriptionsByDays
+                .GroupBy(g => g.Day)
+                .Select(s => new
+                {
+                    Day = new DateTime(startDate.Year, startDate.Month, s.Key.Value),
+                    ProductNames = string.Join("\n\r", s.Select(n => n.ProductName))
+                })
+                .ToDictionary(t => t.Day, t => t.ProductNames);
+            return subscriptionsByDaysDict;
+        }
+        #endregion
+
     }
 }

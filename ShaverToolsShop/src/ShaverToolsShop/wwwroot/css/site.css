@@ -36,3 +36,95 @@ textarea {
     display: none
   }
 }
+
+.container .body-content {
+    padding-top: 65px; 
+}
+
+h3.calendar {
+    box-sizing: border-box;
+    color: #6FB3E0;
+    direction: ltr;
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: lighter;
+    height: 20px;
+    line-height: 20.8999996185303px;
+    margin-bottom: 11px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 11px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    text-align: center;
+    text-rendering: optimizeLegibility;
+    text-transform: uppercase;
+}
+
+a.calendar-previous-month {
+  height: 13px;
+  width: 10px;
+  display: inline-block;
+  text-indent: -9999px;
+  border: 0;
+  cursor: pointer;
+}
+
+a.calendar-next-month {
+  height: 13px;
+  width: 10px;
+  display: inline-block;
+  text-indent: -9999px;
+  border: 0;
+  cursor: pointer;
+}
+
+table.calendar {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+table.calendar thead tr td {
+  /*border-bottom: 1px solid #e1e1e1;*/
+  color: #555;
+  font-size: 16px;
+  font-weight: normal;
+  height: 50px;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  vertical-align: top;
+  text-align: center;
+    width: 14.2857142857%;
+    font-weight: lighter;
+}
+
+table.calendar tbody tr td {
+  background-color: #eaeaea;
+  height: 78px;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+    border: dotted 1px;
+}
+
+table.calendar  tbody tr td.non-date  {
+  background-color: #ffffff;
+  border: none
+}
+
+div.calendar-date {
+    height: 25px;
+    font-size: 20px;
+    font-weight: lighter;
+}
+div.calendar-product {
+    font-size: 12px;
+    font-weight: bold;
+    color: #0000ff;
+}

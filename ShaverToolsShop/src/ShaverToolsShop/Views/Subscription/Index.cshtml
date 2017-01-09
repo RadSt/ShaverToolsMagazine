@@ -4,55 +4,55 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
-<h2>Оформление подписки</h2>
-@using (Html.BeginForm("CalculateSubscriptions", "Subscription",
-    FormMethod.Post, new {@class = "form-horizontal"}))
-{
-    <div class="form-group">
-        <label for="">Выберите текущую дату расчета и создания подписки</label>
-        <div class="col-xs-12">
-            <div class="col-xs-3">
-                <div class="input-group date">
-                    @Html.EditorFor(m => m.CalculateDate, new {@class = "form-control"})
-                    <span class="input-group-addon">
-                        <i class="glyphicon glyphicon-th"></i>
-                    </span>
-                </div>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-default">Расчитать стоимость</button>
-            </div>
-        </div>
-    </div>
-    if (Model.SubscriptionPrice != null)
+<div class="row">
+    <h2>Оформление подписки</h2>
+    @using (Html.BeginForm("CalculateSubscriptions", "Subscription",
+        FormMethod.Post, new { @class = "form-horizontal" }))
     {
         <div class="form-group">
+            <label for="">Выберите текущую дату расчета и создания подписки</label>
             <div class="col-xs-12">
-                Стоимость подписки составляет: @Model.SubscriptionPrice
+                <div class="col-xs-3">
+                    <div class="input-group date">
+                        @Html.EditorFor(m => m.CalculateDate, new { @class = "form-control" })
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-th"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-default">Расчитать стоимость</button>
+                </div>
             </div>
         </div>
+        if (Model.SubscriptionPrice != null)
+        {
+            <div class="form-group">
+                <div class="col-xs-12">
+                    Стоимость подписки составляет: @Model.SubscriptionPrice
+                </div>
+            </div>
+        }
     }
-}
-@if (Model.CurrentActiveSubscriptions.Count > 0)
-{
-    <div class="row">
-        <h4 class="text-center">Подписки</h4>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Товар </th>
-                <th>Стоимость</th>
-                <th>Интервал доставки</th>
-                <th>Дата начала подписки</th>
-                <th>Интервал окончания подписки</th>
-                <th>Первый день доставки</th>
-                <th>Второй день доставки</th>
-            </tr>
-            </thead>
-            @foreach (var subscription in Model.CurrentActiveSubscriptions)
-            {
-                  <tbody>
+    @if (Model.CurrentActiveSubscriptions.Count > 0)
+    {
+        <div class="row">
+            <h4 class="text-center">Подписки</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Товар </th>
+                    <th>Стоимость</th>
+                    <th>Интервал доставки</th>
+                    <th>Дата начала подписки</th>
+                    <th>Интервал окончания подписки</th>
+                    <th>Первый день доставки</th>
+                    <th>Второй день доставки</th>
+                </tr>
+                </thead>
+                @foreach (var subscription in Model.CurrentActiveSubscriptions)
+                {
+                    <tbody>
                     <tr>
                         <td>@subscription.Product.Name</td>
                         <td>@subscription.Product.Price</td>
@@ -72,105 +72,106 @@
                                 subscriptionId = subscription.Id
                             }, FormMethod.Post))
                             {
-                            @Html.TextBox("EndDate","", new { @class = "end-date hidden" })
-                            <input type="submit" value="Удалить" id="Submit" class="btn btn-default"/>
+                                @Html.TextBox("EndDate", "", new { @class = "end-date hidden" })
+                                <input type="submit" value="Остановить подписку" id="Submit" class="btn btn-default" />
                             }
 
                         </td>
                     </tr>
-                  
+
                     </tbody>
-            }
-        </table>
-    </div>
-}
-<hr/>
-@using (Html.BeginForm("AddNewSubscription", "Subscription",
-    FormMethod.Post, new {@class = "form-horizontal"}))
-{
-    <div class="form-group">
-        <div class="col-xs-12">
-            <div class="col-xs-6">
-                <label>Выберите товар</label>
-                <div>
-                    @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
+                }
+            </table>
+        </div>
+    }
+    <hr />
+    @using (Html.BeginForm("AddNewSubscription", "Subscription",
+        FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <div class="form-group">
+            <div class="col-xs-12">
+                <div class="col-xs-6">
+                    <label>Выберите товар</label>
+                    <div>
+                        @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
+                    </div>
                 </div>
-            </div>
-            <div class="col-xs-6">
-                <label>Выберите способ доставки</label>
-                <div>
-                    @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
-                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
-                        new {@checked = true, id = "subscriptionType_onceInMonth"})
-                    @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
-                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
-                        new {id = "subscriptionType_twiceInMonth"})
-                    @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
-                    @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
-                        new {id = "subscriptionType_onceInTwoMonths"})
+                <div class="col-xs-6">
+                    <label>Выберите способ доставки</label>
+                    <div>
+                        @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
+                        @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
+                            new { @checked = true, id = "subscriptionType_onceInMonth" })
+                        @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
+                        @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
+                            new { id = "subscriptionType_twiceInMonth" })
+                        @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
+                        @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
+                            new { id = "subscriptionType_onceInTwoMonths" })
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-12">
-            <div class="col-xs-2">
-                <label>Первая дата доставки</label>
-                <div>
-                    @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+        <div class="form-group">
+            <div class="col-xs-12">
+                <div class="col-xs-2">
+                    <label>Первая дата доставки</label>
+                    <div>
+                        @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+                    </div>
                 </div>
-            </div>
-            <div id="secondDeliveryDay" class="col-xs-2 hidden">
-                <label>Вторая дата доставки</label>
-                <div>
-                    @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList)
+                <div id="secondDeliveryDay" class="col-xs-2 hidden">
+                    <label>Вторая дата доставки</label>
+                    <div>
+                        @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList)
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div>
-        @Html.TextBox("StartDate", "", new { @class = "start-date hidden" })
-    </div>
-    <div class="form-group">
-        <div class="col-xs-offset-4 col-xs-10">
-            <button id="addOrder" type="submit" class="btn btn-default">Добавить подписку</button>
+        <div>
+            @Html.TextBox("StartDate", "", new { @class = "start-date hidden" })
         </div>
-    </div>
-}
+        <div class="form-group">
+            <div class="col-xs-offset-4 col-xs-10">
+                <button id="addOrder" type="submit" class="btn btn-default">Добавить подписку</button>
+            </div>
+        </div>
+    }
+</div>
 
-@section scripts{
-<script>
-    $('.input-group.date').datepicker({
-        format: "dd.mm.yyyy",
-        language: "ru",
-        forceParse: false,
-        autoclose: true,
-        todayHighlight: true,
-        startDate: '-0d'
-    });
-    (function () {
-        initDate();
+    @section scripts{
+        <script>
+            $('.input-group.date').datepicker({
+                format: "dd.mm.yyyy",
+                language: "ru",
+                forceParse: false,
+                autoclose: true,
+                todayHighlight: true,
+                startDate: '-0d'
+            });
+            (function () {
+                initDate();
 
-        $('#subscriptionType_twiceInMonth').click(function() {
-            $("#secondDeliveryDay").removeClass('hidden');
-        });
-        $('#subscriptionType_onceInMonth').click(function() {
-            $("#secondDeliveryDay").addClass('hidden');
-        });
-        $('#subscriptionType_onceInTwoMonths').click(function() {
-            $("#secondDeliveryDay").addClass('hidden');
-        });
+                $('#subscriptionType_twiceInMonth').click(function () {
+                    $("#secondDeliveryDay").removeClass('hidden');
+                });
+                $('#subscriptionType_onceInMonth').click(function () {
+                    $("#secondDeliveryDay").addClass('hidden');
+                });
+                $('#subscriptionType_onceInTwoMonths').click(function () {
+                    $("#secondDeliveryDay").addClass('hidden');
+                });
 
-        $('#CalculateDate').change(function () {
-            initDate();
-        });
+                $('#CalculateDate').change(function () {
+                    initDate();
+                });
 
-        function initDate() {
-            var calculationDate = $('#CalculateDate').val();
-            $(".end-date").val(calculationDate);
-            $(".start-date").val(calculationDate);
-        }
+                function initDate() {
+                    var calculationDate = $('#CalculateDate').val();
+                    $(".end-date").val(calculationDate);
+                    $(".start-date").val(calculationDate);
+                }
 
-    })();
-</script>
-}
+            })();
+        </script>
+    }

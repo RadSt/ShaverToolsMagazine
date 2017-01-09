@@ -17,11 +17,10 @@ namespace ShaverToolsShop.Controllers
         {
             _calendarService = calendarService;
         }
-        public async Task<IActionResult> Index(string selectedDate)
+        public async Task<IActionResult> Index(DateTime? selectedDate)
         {
-            var date = DateTime.Today;
-            var todayMonth = string.IsNullOrEmpty(selectedDate) ? new DateTime(date.Year, date.Month, 1) :
-                DateTime.Parse(selectedDate);
+            var date = selectedDate ?? DateTime.Now;
+            var todayMonth = new DateTime(date.Year, date.Month, 1);
 
             var subscriptionByDays = await _calendarService.GetSubscriptionMonthCalendar(todayMonth);
             subscriptionByDays.SelectedMonth = todayMonth;
