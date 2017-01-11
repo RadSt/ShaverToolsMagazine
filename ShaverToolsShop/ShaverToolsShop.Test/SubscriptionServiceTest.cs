@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using ShaverToolsShop.Conventions;
 using ShaverToolsShop.Conventions.Enums;
 using ShaverToolsShop.Conventions.Repositories;
 using ShaverToolsShop.Conventions.Services;
@@ -20,8 +21,11 @@ namespace ShaverToolsShop.Test
         {
             _subscriptionReadRepository = new Mock<ISubscriptionReadRepository>();
             _subscriptionRepository = new Mock<ISubscriptionRepository>();
+            _productReadRepository = new Mock<IProductReadRepository>();
+
             _subscriptionService = new SubscriptionService(_subscriptionReadRepository.Object
-                , _subscriptionRepository.Object);
+                , _subscriptionRepository.Object
+                , _productReadRepository.Object);
 
             _subscription =
                 new Subscription
@@ -83,6 +87,8 @@ namespace ShaverToolsShop.Test
 
         private Mock<ISubscriptionReadRepository> _subscriptionReadRepository;
         private Mock<ISubscriptionRepository> _subscriptionRepository;
+        private Mock<IProductReadRepository> _productReadRepository;
+
         private ISubscriptionService _subscriptionService;
         private List<Subscription> _subscriptions;
         private Subscription _subscription;
@@ -239,7 +245,7 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public void WeGetUpdatesSubscriptionEntity_WhenWeUpdateSubscription()
+        public async Task WeGetUpdatesSubscriptionEntity_WhenWeUpdateSubscription()
         {
             //Arrange
            var newSubscription = new Subscription
@@ -250,19 +256,21 @@ namespace ShaverToolsShop.Test
                Product =
                         new Product
                         {
+                            Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c077"),
                             Name = "Бритвенный станок + гель для бритья",
                             Price = 9
                         }
            };
             var subscriptionId = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073");
+            _productReadRepository.Setup(m => m.GetProductByName(newSubscription.Product.Name)).ReturnsAsync(newSubscription.Product);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
 
-
             //Act
-            var updatedSubscription = _subscriptionService.UpdateSubscription(subscriptionId, newSubscription);
+            var result = await  _subscriptionService.UpdateSubscription(subscriptionId, newSubscription);
+            var updatedEntity = result.Addition as Subscription;
 
             //Assert
-            Assert.AreEqual(updatedSubscription.subscriptionId, subscriptionId);
+            Assert.AreEqual(updatedEntity?.Id, subscriptionId);
         }
     }
 }

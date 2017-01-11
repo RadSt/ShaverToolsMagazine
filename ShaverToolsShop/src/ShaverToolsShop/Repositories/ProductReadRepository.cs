@@ -18,5 +18,10 @@ namespace ShaverToolsShop.Repositories
         {
             return GetAll().ToListAsync();
         }
+
+        public Task<Product> GetProductByName(string productName)
+        {
+            return GetAll().FirstOrDefaultAsync(x => x.Name == productName);
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace ShaverToolsShop.Conventions.Repositories
     public interface IProductReadRepository: IReadRepository<Product>
     {
         Task<List<Product>> GetAllProducts();
+        Task<Product> GetProductByName(string productName);
     }
 }

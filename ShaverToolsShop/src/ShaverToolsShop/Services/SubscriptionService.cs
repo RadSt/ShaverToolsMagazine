@@ -15,12 +15,15 @@ namespace ShaverToolsShop.Services
     {
         private readonly ISubscriptionReadRepository _subscriptionReadRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IProductReadRepository _productReadRepository;
 
         public SubscriptionService(ISubscriptionReadRepository subscriptionReadRepository
-            , ISubscriptionRepository subscriptionRepository)
+            , ISubscriptionRepository subscriptionRepository
+            , IProductReadRepository productReadRepository)
         {
             _subscriptionReadRepository = subscriptionReadRepository;
             _subscriptionRepository = subscriptionRepository;
+            _productReadRepository = productReadRepository;
         }
 
         public async Task<List<Subscription>> GetAllWithProductsWithNotExpiredDate(DateTime todayDate)
@@ -106,7 +109,24 @@ namespace ShaverToolsShop.Services
             }
             return cost;
         }
+        public async Task<CommandResult> UpdateSubscription(Guid subscriptionId, Subscription subscription)
+        {
+            var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscriptionId);
+            var product = await _productReadRepository.GetProductByName(subscription.Product.Name);
 
+            subscriprionEntity.FirstDeliveryDay = subscription.FirstDeliveryDay;
+            subscriprionEntity.EndDate = subscription.EndDate;
+            subscriprionEntity.StartDate = subscription.StartDate;
+            subscriprionEntity.SecondDeliveryDay = subscription.SecondDeliveryDay;
+            subscriprionEntity.SubscriptionStatus = subscription.SubscriptionStatus;
+            subscriprionEntity.SubscriptionType = subscription.SubscriptionType;
+            subscriprionEntity.ProductId = product.Id;
+            subscriprionEntity.Product = product;
+
+            await _subscriptionRepository.SaveAsync();
+
+            return new CommandResult(true, "", subscriprionEntity);
+        }
         #region Private
 
         private int PassedDeliveriesQtyForTwiceInMonth(DateTime startDate, DateTime endDate,
@@ -157,9 +177,6 @@ namespace ShaverToolsShop.Services
 
             return deliveriesQty;
         }
-
-        
-
         #endregion
     }
 }
