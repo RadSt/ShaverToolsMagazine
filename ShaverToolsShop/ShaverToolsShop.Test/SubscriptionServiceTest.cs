@@ -248,8 +248,9 @@ namespace ShaverToolsShop.Test
         public async Task WeGetUpdatesSubscriptionEntity_WhenWeUpdateSubscription()
         {
             //Arrange
-           var newSubscription = new Subscription
+           var updatedSubscription = new Subscription
            {
+               Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
                StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
                EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
                FirstDeliveryDay = 15,
@@ -261,16 +262,16 @@ namespace ShaverToolsShop.Test
                             Price = 9
                         }
            };
-            var subscriptionId = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073");
-            _productReadRepository.Setup(m => m.GetProductByName(newSubscription.Product.Name)).ReturnsAsync(newSubscription.Product);
-            _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
+            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(updatedSubscription.Product);
+            _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
 
             //Act
-            var result = await  _subscriptionService.UpdateSubscription(subscriptionId, newSubscription);
+            var result = await  _subscriptionService.UpdateSubscription(updatedSubscription);
             var updatedEntity = result.Addition as Subscription;
-
+       
             //Assert
-            Assert.AreEqual(updatedEntity?.Id, subscriptionId);
+            Assert.AreEqual(updatedSubscription.FirstDeliveryDay, updatedEntity.FirstDeliveryDay);
         }
+
     }
 }

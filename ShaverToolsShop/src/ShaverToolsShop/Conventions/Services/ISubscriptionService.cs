@@ -14,6 +14,6 @@ namespace ShaverToolsShop.Conventions.Services
         Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate);
         IEnumerable<SelectListItem> GetDaysInMonthSelectList();
         Task<decimal> CalculateSubscriptionsCost(DateTime reportDate);
-        Task<CommandResult> UpdateSubscription(Guid subscriptionId, Subscription subscription);
+        Task<CommandResult> UpdateSubscription(Subscription subscription);
     }
 }

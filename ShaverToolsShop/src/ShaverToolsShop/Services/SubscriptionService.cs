@@ -109,9 +109,9 @@ namespace ShaverToolsShop.Services
             }
             return cost;
         }
-        public async Task<CommandResult> UpdateSubscription(Guid subscriptionId, Subscription subscription)
+        public async Task<CommandResult> UpdateSubscription(Subscription subscription)
         {
-            var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscriptionId);
+            var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscription.Id);
             var product = await _productReadRepository.GetProductByName(subscription.Product.Name);
 
             subscriprionEntity.FirstDeliveryDay = subscription.FirstDeliveryDay;
