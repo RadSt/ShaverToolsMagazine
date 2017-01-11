@@ -114,6 +114,9 @@ namespace ShaverToolsShop.Services
             var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscription.Id);
             var product = await _productReadRepository.GetProductByName(subscription.Product.Name);
 
+            if (product == null)
+                return new CommandResult(false, "Product Not Found");
+
             subscriprionEntity.FirstDeliveryDay = subscription.FirstDeliveryDay;
             subscriprionEntity.EndDate = subscription.EndDate;
             subscriprionEntity.StartDate = subscription.StartDate;

@@ -291,14 +291,14 @@ namespace ShaverToolsShop.Test
                              Price = 9
                          }
             };
-            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(new Product());
+            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(null);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
 
             //Act
             var result = await _subscriptionService.UpdateSubscription(updatedSubscription);
 
             //Assert
-            Assert.IsTrue(result.Message == "ProductNotFound");
+            Assert.IsTrue(result.Message == "Product Not Found");
         }
 
     }
