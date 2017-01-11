@@ -158,6 +158,8 @@ namespace ShaverToolsShop.Services
             return deliveriesQty;
         }
 
+        
+
         #endregion
     }
 }

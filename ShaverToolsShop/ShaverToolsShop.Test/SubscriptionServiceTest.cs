@@ -185,7 +185,7 @@ namespace ShaverToolsShop.Test
             var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
 
             //Assert
-            Assert.AreEqual(_subscription.StartDate, startDate);
+            Assert.AreEqual(addedSubscription.StartDate, startDate);
         }
 
         [Test]
@@ -236,6 +236,33 @@ namespace ShaverToolsShop.Test
 
             //Assert
             Assert.AreEqual(daysInMonthList, newDaysInMonth);
+        }
+
+        [Test]
+        public void WeGetUpdatesSubscriptionEntity_WhenWeUpdateSubscription()
+        {
+            //Arrange
+           var newSubscription = new Subscription
+           {
+               StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
+               EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
+               FirstDeliveryDay = 15,
+               Product =
+                        new Product
+                        {
+                            Name = "Бритвенный станок + гель для бритья",
+                            Price = 9
+                        }
+           };
+            var subscriptionId = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073");
+            _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
+
+
+            //Act
+            var updatedSubscription = _subscriptionService.UpdateSubscription(subscriptionId, newSubscription);
+
+            //Assert
+            Assert.AreEqual(updatedSubscription.subscriptionId, subscriptionId);
         }
     }
 }
