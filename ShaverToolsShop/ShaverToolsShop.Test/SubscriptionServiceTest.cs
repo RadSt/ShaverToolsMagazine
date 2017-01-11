@@ -301,5 +301,33 @@ namespace ShaverToolsShop.Test
             Assert.IsTrue(result.Message == "Product Not Found");
         }
 
+        [Test]
+        public async Task WeGetSubscriptionNotFoundMessage_WhenWeUpdateSubscriptionWithNoExistproductId()
+        {
+            //Arrange
+            var updatedSubscription = new Subscription
+            {
+                Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+                StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
+                EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
+                FirstDeliveryDay = 15,
+                Product =
+                         new Product
+                         {
+                             Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c000"),
+                             Name = "Бритвенный станок + гель для бритья",
+                             Price = 9
+                         }
+            };
+            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(updatedSubscription.Product);
+            _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(null);
+
+            //Act
+            var result = await _subscriptionService.UpdateSubscription(updatedSubscription);
+
+            //Assert
+            Assert.IsTrue(result.Message == "Subscription Not Found");
+        }
+
     }
 }
