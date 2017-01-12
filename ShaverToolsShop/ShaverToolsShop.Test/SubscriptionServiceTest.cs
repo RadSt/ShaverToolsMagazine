@@ -264,9 +264,11 @@ namespace ShaverToolsShop.Test
            };
             _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(updatedSubscription.Product);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
+            _subscriptionRepository.Setup(m => m.AddNewSubscription(updatedSubscription))
+               .ReturnsAsync(new Subscription() { Id = Guid.NewGuid()});
 
             //Act
-            var result = await  _subscriptionService.UpdateSubscription(updatedSubscription);
+            var result = await  _subscriptionService.ChangeSubscription(updatedSubscription);
             var updatedEntity = result.Addition as Subscription;
        
             //Assert
@@ -295,7 +297,7 @@ namespace ShaverToolsShop.Test
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
 
             //Act
-            var result = await _subscriptionService.UpdateSubscription(updatedSubscription);
+            var result = await _subscriptionService.ChangeSubscription(updatedSubscription);
 
             //Assert
             Assert.IsTrue(result.Message == "Product Not Found");
@@ -323,7 +325,7 @@ namespace ShaverToolsShop.Test
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(null);
 
             //Act
-            var result = await _subscriptionService.UpdateSubscription(updatedSubscription);
+            var result = await _subscriptionService.ChangeSubscription(updatedSubscription);
 
             //Assert
             Assert.IsTrue(result.Message == "Subscription Not Found");

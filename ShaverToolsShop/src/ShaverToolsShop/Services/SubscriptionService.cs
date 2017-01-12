@@ -109,7 +109,7 @@ namespace ShaverToolsShop.Services
             }
             return cost;
         }
-        public async Task<CommandResult> UpdateSubscription(Subscription subscription)
+        public async Task<CommandResult> ChangeSubscription(Subscription subscription)
         {
             var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscription.Id);
             var product = await _productReadRepository.GetProductByName(subscription.Product.Name);
@@ -119,18 +119,17 @@ namespace ShaverToolsShop.Services
             if (product == null)
                 return new CommandResult(false, "Product Not Found");
 
-            subscriprionEntity.FirstDeliveryDay = subscription.FirstDeliveryDay;
-            subscriprionEntity.EndDate = subscription.EndDate;
-            subscriprionEntity.StartDate = subscription.StartDate;
-            subscriprionEntity.SecondDeliveryDay = subscription.SecondDeliveryDay;
-            subscriprionEntity.SubscriptionStatus = subscription.SubscriptionStatus;
-            subscriprionEntity.SubscriptionType = subscription.SubscriptionType;
-            subscriprionEntity.ProductId = product.Id;
-            subscriprionEntity.Product = product;
-
+            subscriprionEntity.EndDate = DateTime.Now;
+            subscriprionEntity.SubscriptionStatus = SubscriptionStatus.Stopped;
             await _subscriptionRepository.SaveAsync();
 
-            return new CommandResult(true, "", subscriprionEntity);
+
+            subscription.StartDate = DateTime.Now;
+            subscription.SubscriptionStatus = SubscriptionStatus.Started;
+            var newSubscription = await _subscriptionRepository.AddNewSubscription(subscription);
+
+
+            return new CommandResult(true, "", newSubscription);
         }
         #region Private
 
