@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using ShaverToolsShop.Conventions.Enums;
 
 namespace ShaverToolsShop.Entities
@@ -14,5 +15,7 @@ namespace ShaverToolsShop.Entities
         public Product Product { get; set; }
         public int FirstDeliveryDay { get; set; }
         public int? SecondDeliveryDay { get; set; }
+        [NotMapped]
+        public bool? IsEditableField { get; set; }     
     }
 }

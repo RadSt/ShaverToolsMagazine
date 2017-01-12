@@ -1,5 +1,7 @@
 ﻿@using ShaverToolsShop.Conventions.Enums
 @using ShaverToolsShop.Conventions.Extensions
+@using ShaverToolsShop.Entities
+@using ShaverToolsShop.ViewModels
 @model ShaverToolsShop.ViewModels.SubscriptionViewModel
 @{
     ViewData["Title"] = "Home Page";
@@ -69,6 +71,17 @@
                         <td>
                             @using (Html.BeginForm("StopSubscriptions", "Subscription", new
                             {
+                                subscriptionId = subscription.Id,
+                                subscriptionViewModel = Model
+                            }, FormMethod.Post))
+                            {
+                                <input type="submit" value="Изменить подписку" id="Submit" class="btn btn-default" />
+                            }
+
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("StopSubscriptions", "Subscription", new
+                            {
                                 subscriptionId = subscription.Id
                             }, FormMethod.Post))
                             {
@@ -78,6 +91,10 @@
 
                         </td>
                     </tr>
+                       @if (subscription.IsEditableField != null && subscription.IsEditableField.Value)
+                       {
+                           @*@Html.Partial("_EditSubscription", new Subscription());*@
+                       }
 
                     </tbody>
                 }

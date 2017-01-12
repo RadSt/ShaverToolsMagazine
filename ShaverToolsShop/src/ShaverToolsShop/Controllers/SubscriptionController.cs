@@ -76,6 +76,17 @@ namespace ShaverToolsShop.Controllers
             return View("Index", newSubscriptionViewModel);
         }
 
+        [HttpPost]
+        public IActionResult ShowEditFieldsForSubscription(SubscriptionViewModel subscriptionViewModel, Guid subscriptionId)
+        {
+            foreach (var subscription in subscriptionViewModel.CurrentActiveSubscriptions)
+            {
+                if (subscription.Id == subscriptionId)
+                    subscription.IsEditableField = true;
+            }
+            return View("Index", subscriptionViewModel);
+        }
+
         [NonAction]
         private async Task<SubscriptionViewModel> GetSubscriptionViewModel(DateTime todayDate)
         {

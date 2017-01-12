@@ -245,7 +245,7 @@ namespace ShaverToolsShop.Test
         }
 
         [Test]
-        public async Task WeGetUpdatesSubscriptionEntity_WhenWeUpdateSubscription()
+        public async Task WeGetRecreatedSubscriptionEntity_WhenWeUpdateSubscription()
         {
             //Arrange
            var updatedSubscription = new Subscription
@@ -270,7 +270,7 @@ namespace ShaverToolsShop.Test
             var updatedEntity = result.Addition as Subscription;
        
             //Assert
-            Assert.AreEqual(updatedSubscription.FirstDeliveryDay, updatedEntity.FirstDeliveryDay);
+            Assert.AreNotEqual(updatedSubscription.Id, updatedEntity.Id);
         }
 
         [Test]
