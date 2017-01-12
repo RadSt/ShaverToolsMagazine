@@ -2,7 +2,7 @@
 @using ShaverToolsShop.Conventions.Extensions
 @using ShaverToolsShop.Entities
 @using ShaverToolsShop.ViewModels
-@model ShaverToolsShop.ViewModels.SubscriptionViewModel
+@model SubscriptionViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -92,8 +92,7 @@
                         </td>
                     </tr>
                        @if (subscription.IsEditableField != null && subscription.IsEditableField.Value)
-                       {
-                           @*@Html.Partial("_EditSubscription", new Subscription());*@
+                           @Html.Partial("_EditSubscription", new Subscription())
                        }
 
                     </tbody>

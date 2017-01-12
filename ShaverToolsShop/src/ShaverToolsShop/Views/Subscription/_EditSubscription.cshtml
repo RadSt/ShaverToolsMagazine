@@ -1,0 +1,37 @@
+﻿@using ShaverToolsShop.Conventions.Enums
+@using ShaverToolsShop.Conventions.Extensions
+@using ShaverToolsShop.Entities;
+@model Subscription
+
+@using (Html.BeginForm("SaveEditedSubscription", "Subscription", FormMethod.Post))
+{
+    <tr>
+        <td>
+            @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
+        <td>
+            @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
+            @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
+                            new { @checked = true, id = "subscriptionType_onceInMonth" })
+            @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
+            @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
+                            new { id = "subscriptionType_twiceInMonth" })
+            @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
+            @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
+                            new { id = "subscriptionType_onceInTwoMonths" })
+        </td>
+        <td>
+            @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+        </td>
+        <td>
+            @if (Model.SubscriptionType == SubscriptionType.TwiceInMonth)
+            {
+                @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList)
+
+            }
+        </td>
+    </tr>
+    <input type="submit" value="Сохранить" id="Submit" class="btn btn-default" />
+
+}
+
+

@@ -61,7 +61,7 @@ namespace ShaverToolsShop.Controllers
                 newSubscriptionViewModel.SubscriptionPrice
                     =
                     await _subscriptionService.CalculateSubscriptionsCost(
-                       todayDate);
+                        todayDate);
             return View("Index", newSubscriptionViewModel);
         }
 
@@ -77,13 +77,28 @@ namespace ShaverToolsShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult ShowEditFieldsForSubscription(SubscriptionViewModel subscriptionViewModel, Guid subscriptionId)
+        public async Task<IActionResult> ShowEditFieldsForSubscription(SubscriptionViewModel subscriptionViewModel,
+            Guid subscriptionId)
         {
             foreach (var subscription in subscriptionViewModel.CurrentActiveSubscriptions)
-            {
                 if (subscription.Id == subscriptionId)
+                {
+                    subscription.ProductsList = await _productService.GetAllForSelect();
+                    subscription.DaysInMonthList = _subscriptionService.GetDaysInMonthSelectList();
                     subscription.IsEditableField = true;
-            }
+                }
+            return View("Index", subscriptionViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveEditedSubscription(Subscription subscription)
+        {
+            if (!ModelState.IsValid) return RedirectToAction("Index");
+
+            await _subscriptionService.ChangeSubscription(subscription);
+
+            var todayDate = DateTime.Now;
+            var subscriptionViewModel = await GetSubscriptionViewModel(todayDate);
             return View("Index", subscriptionViewModel);
         }
 

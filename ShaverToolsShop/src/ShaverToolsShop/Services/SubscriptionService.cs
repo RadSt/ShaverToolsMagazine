@@ -123,7 +123,8 @@ namespace ShaverToolsShop.Services
             subscriprionEntity.SubscriptionStatus = SubscriptionStatus.Stopped;
             await _subscriptionRepository.SaveAsync();
 
-
+            subscription.Product = product;
+            subscription.ProductId = product.Id;
             subscription.StartDate = DateTime.Now;
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
             var newSubscription = await _subscriptionRepository.AddNewSubscription(subscription);
