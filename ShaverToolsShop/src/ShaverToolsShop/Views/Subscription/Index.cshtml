@@ -69,13 +69,14 @@
                             }
                         </td>
                         <td>
-                            @using (Html.BeginForm("StopSubscriptions", "Subscription", new
+                            @using (Html.BeginForm("ShowEditFieldsForSubscription", "Subscription", new
                             {
                                 subscriptionId = subscription.Id,
                                 subscriptionViewModel = Model
                             }, FormMethod.Post))
                             {
-                                <input type="submit" value="Изменить подписку" id="Submit" class="btn btn-default" />
+                                @Html.TextBox("TodayDate", "", new { @class = "end-date hidden" })
+                                <input type="submit" value="Изменить" id="Submit" class="btn btn-default" />
                             }
 
                         </td>
@@ -86,14 +87,14 @@
                             }, FormMethod.Post))
                             {
                                 @Html.TextBox("EndDate", "", new { @class = "end-date hidden" })
-                                <input type="submit" value="Остановить подписку" id="Submit" class="btn btn-default" />
+                                <input type="submit" value="Остановить" id="Submit" class="btn btn-default" />
                             }
 
                         </td>
                     </tr>
                        @if (subscription.IsEditableField != null && subscription.IsEditableField.Value)
                        {
-                           @Html.Partial("_EditSubscription", new Subscription())
+                           @Html.Partial("_EditSubscription", subscription)
                        }
 
                     </tbody>
@@ -181,6 +182,16 @@
 
                 $('#CalculateDate').change(function () {
                     initDate();
+                });
+
+                $('#editSubscriptionType_twiceInMonth').click(function () {
+                    $("#editSecondDeliveryDay").removeClass('hidden');
+                });
+                $('#editSubscriptionType_onceInMonth').click(function () {
+                    $("#editSecondDeliveryDay").addClass('hidden');
+                });
+                $('#editSubscriptionType_onceInTwoMonths').click(function () {
+                    $("#editSecondDeliveryDay").addClass('hidden');
                 });
 
                 function initDate() {

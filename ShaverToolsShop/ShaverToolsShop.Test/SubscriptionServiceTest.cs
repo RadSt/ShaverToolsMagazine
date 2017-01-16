@@ -262,7 +262,7 @@ namespace ShaverToolsShop.Test
                             Price = 9
                         }
            };
-            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(updatedSubscription.Product);
+            _productReadRepository.Setup(m => m.GetProduct(updatedSubscription.ProductId)).ReturnsAsync(updatedSubscription.Product);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
             _subscriptionRepository.Setup(m => m.AddNewSubscription(updatedSubscription))
                .ReturnsAsync(new Subscription() { Id = Guid.NewGuid()});
@@ -293,7 +293,7 @@ namespace ShaverToolsShop.Test
                              Price = 9
                          }
             };
-            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(null);
+            _productReadRepository.Setup(m => m.GetProduct(updatedSubscription.Product.Id)).ReturnsAsync(null);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
 
             //Act
@@ -321,7 +321,7 @@ namespace ShaverToolsShop.Test
                              Price = 9
                          }
             };
-            _productReadRepository.Setup(m => m.GetProductByName(updatedSubscription.Product.Name)).ReturnsAsync(updatedSubscription.Product);
+            _productReadRepository.Setup(m => m.GetProduct(updatedSubscription.Product.Id)).ReturnsAsync(updatedSubscription.Product);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(null);
 
             //Act

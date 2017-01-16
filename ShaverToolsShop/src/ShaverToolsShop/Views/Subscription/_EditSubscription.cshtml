@@ -1,37 +1,45 @@
 ﻿@using ShaverToolsShop.Conventions.Enums
 @using ShaverToolsShop.Conventions.Extensions
-@using ShaverToolsShop.Entities;
-@model Subscription
+@model ShaverToolsShop.Entities.Subscription
 
 @using (Html.BeginForm("SaveEditedSubscription", "Subscription", FormMethod.Post))
 {
     <tr>
         <td>
-            @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
+        @Html.LabelFor(m => m.ProductId)
+        @Html.DropDownListFor(m => m.ProductId, Model.ProductsList)
         <td>
             @Html.Label(SubscriptionType.OnceInMonth.GetDisplayValue())
             @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInMonth,
-                            new { @checked = true, id = "subscriptionType_onceInMonth" })
+                new {@checked = true, id = "editSubscriptionType_onceInMonth"})
+
+        </td>
+        <td>
             @Html.Label(SubscriptionType.TwiceInMonth.GetDisplayValue())
             @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.TwiceInMonth,
-                            new { id = "subscriptionType_twiceInMonth" })
+                new {id = "editSubscriptionType_twiceInMonth"})
+        </td>
+        <td>
             @Html.Label(SubscriptionType.OnceInTwoMonths.GetDisplayValue())
             @Html.RadioButtonFor(m => m.SubscriptionType, SubscriptionType.OnceInTwoMonths,
-                            new { id = "subscriptionType_onceInTwoMonths" })
+                new {id = "editSubscriptionType_onceInTwoMonths"})
         </td>
         <td>
-            @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList)
+            <label>Первая  дата доставки</label>
+
+            @Html.DropDownListFor(m => m.FirstDeliveryDay, Model.DaysInMonthList, new {id= "editFirstDeliveryDay" })
         </td>
-        <td>
-            @if (Model.SubscriptionType == SubscriptionType.TwiceInMonth)
-            {
+        <td id="editSecondDeliveryDay" class="hidden">
+            
+            <label>Вторая  дата доставки</label>
+
                 @Html.DropDownListFor(m => m.SecondDeliveryDay, Model.DaysInMonthList)
-
-            }
         </td>
+        <td>
+            <input type="submit" value="Сохранить" id="Submit" class="btn btn-default"/>
+        </td>
+        @Html.HiddenFor(x => x.Id)
     </tr>
-    <input type="submit" value="Сохранить" id="Submit" class="btn btn-default" />
-
 }
 
 

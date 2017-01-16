@@ -77,17 +77,17 @@ namespace ShaverToolsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ShowEditFieldsForSubscription(SubscriptionViewModel subscriptionViewModel,
-            Guid subscriptionId)
+        public async Task<IActionResult> ShowEditFieldsForSubscription(Guid subscriptionId, DateTime todayDate)
         {
-            foreach (var subscription in subscriptionViewModel.CurrentActiveSubscriptions)
+            var subscriptions = await GetSubscriptionViewModel(todayDate);
+            foreach (var subscription in subscriptions.CurrentActiveSubscriptions)
                 if (subscription.Id == subscriptionId)
                 {
                     subscription.ProductsList = await _productService.GetAllForSelect();
                     subscription.DaysInMonthList = _subscriptionService.GetDaysInMonthSelectList();
                     subscription.IsEditableField = true;
                 }
-            return View("Index", subscriptionViewModel);
+            return View("Index", subscriptions);
         }
 
         [HttpPost]

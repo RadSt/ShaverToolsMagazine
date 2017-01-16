@@ -15,7 +15,6 @@ namespace ShaverToolsShop.Repositories
         public async Task<Subscription> AddNewSubscription(Subscription subscription)
         {
             var subscriptionEntity =  Add(subscription);
-            await SaveAsync();
             return subscriptionEntity;
         }
 

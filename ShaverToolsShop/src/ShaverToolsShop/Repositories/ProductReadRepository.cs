@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,9 @@ namespace ShaverToolsShop.Repositories
             return GetAll().ToListAsync();
         }
 
-        public Task<Product> GetProductByName(string productName)
+        public Task<Product> GetProduct(Guid productId)
         {
-            return GetAll().FirstOrDefaultAsync(x => x.Name == productName);
+            return GetAll().FirstOrDefaultAsync(x => x.Id == productId);
         }
     }
 }

@@ -31,13 +31,20 @@ namespace ShaverToolsShop.Services
             var subscriptions =  await _subscriptionReadRepository
                 .GetAllSubscriptionsWithProducts();
 
-            return subscriptions.Where(x => x.EndDate == null || x.EndDate > todayDate).ToList();
+            return subscriptions
+                .Where(x => 
+                (x.EndDate == null || x.EndDate > todayDate) 
+                && x.SubscriptionStatus != SubscriptionStatus.Stopped)
+                .ToList();
         }
 
         public async Task<Subscription> AddNewSubscription(Subscription subscription)
         {
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
-            return await _subscriptionRepository.AddNewSubscription(subscription);
+            var newSubscription =  await _subscriptionRepository.AddNewSubscription(subscription);
+            await _subscriptionRepository.SaveAsync();
+            return newSubscription;
+
         }
 
         public async Task<CommandResult> StoppedSubscription(Guid subscriptionId, DateTime stoppedDate)
@@ -112,23 +119,25 @@ namespace ShaverToolsShop.Services
         public async Task<CommandResult> ChangeSubscription(Subscription subscription)
         {
             var subscriprionEntity = await _subscriptionRepository.GetSubscriptionAsync(subscription.Id);
-            var product = await _productReadRepository.GetProductByName(subscription.Product.Name);
+            var product = await _productReadRepository.GetProduct(subscription.ProductId);
 
             if(subscriprionEntity == null)
                 return new CommandResult(false, "Subscription Not Found");
             if (product == null)
                 return new CommandResult(false, "Product Not Found");
 
-            subscriprionEntity.EndDate = DateTime.Now;
-            subscriprionEntity.SubscriptionStatus = SubscriptionStatus.Stopped;
-            await _subscriptionRepository.SaveAsync();
+            if (subscriprionEntity.SubscriptionStatus == SubscriptionStatus.Started)
+            {
+                subscriprionEntity.EndDate = DateTime.Now;
+                subscriprionEntity.SubscriptionStatus = SubscriptionStatus.Stopped;
+            }
 
-            subscription.Product = product;
             subscription.ProductId = product.Id;
             subscription.StartDate = DateTime.Now;
             subscription.SubscriptionStatus = SubscriptionStatus.Started;
             var newSubscription = await _subscriptionRepository.AddNewSubscription(subscription);
 
+            await _subscriptionRepository.SaveAsync();
 
             return new CommandResult(true, "", newSubscription);
         }
