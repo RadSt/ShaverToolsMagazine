@@ -14,7 +14,7 @@ using ShaverToolsShop.Services;
 namespace ShaverToolsShop.Test
 {
     [TestFixture]
-    public class CalculateSubscriptionSum
+    public class SubscriptionServiceTest
     {
         [SetUp]
         public void SetUp()
@@ -30,7 +30,7 @@ namespace ShaverToolsShop.Test
             _subscription =
                 new Subscription
                 {
-                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+                    Id = Guid.NewGuid(),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     FirstDeliveryDay = 20,
                     Product =
@@ -46,7 +46,7 @@ namespace ShaverToolsShop.Test
             {
                 new Subscription
                 {
-                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c074"),
+                    Id = Guid.NewGuid(),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
                     FirstDeliveryDay = 20,
@@ -59,7 +59,7 @@ namespace ShaverToolsShop.Test
                 },
                 new Subscription
                 {
-                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c075"),
+                    Id = Guid.NewGuid(),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     EndDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null),
                     FirstDeliveryDay = 25,
@@ -72,7 +72,7 @@ namespace ShaverToolsShop.Test
                 },
                 new Subscription
                 {
-                    Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c076"),
+                    Id = Guid.NewGuid(),
                     StartDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null),
                     FirstDeliveryDay = 15,
                     Product =
@@ -94,74 +94,19 @@ namespace ShaverToolsShop.Test
         private Subscription _subscription;
 
         [Test]
-        public async Task MustReturnOnceTimeCost_WhenWeCalculatingSubscriptionOnceATwoMonthsForTwoMonthsForOneProduct()
-        {
-            //Arrange
-            var twoMonthsDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
-            var subscriptionCost = 3M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
-            }
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
-        }
-
-        [Test]
-        public async Task MustReturnOneTimeCost_WhenWeCalculatingSubscriptionOnceAMonthForOneMonthForOneProduct()
-        {
-            //Arrange
-            var oneMonthDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null);
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.SubscriptionType = SubscriptionType.OnceInMonth;
-            }
-            var subscriptionCost = 3M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
-        }
-
-        [Test]
-        public async Task MustReturnTwiceTimeCost_WhenWeCalculatingSubscriptionTwiceAMonthForOneMonthForOneProduct()
-        {
-            //Arrange
-            var oneMonthDate = DateTime.ParseExact("01.02.2017", "dd.MM.yyyy", null);
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.SubscriptionType = SubscriptionType.TwiceInMonth;
-                subscription.SecondDeliveryDay = 28;
-            }
-            var subscriptionCost = 6M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
-
-            //Act
-            var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
-
-            //Assert
-            Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
-        }
-
-        [Test]
         public async Task ShouldAddSubscription_WhenWeAddSubscription()
         {
             //Arrange
+            var newSubscriptionHash = _subscription.GetHashCode();
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription))
                 .ReturnsAsync(_subscription);
 
             //Act
             var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
+            var addedSubscriptionHash = addedSubscription.GetHashCode();
 
             //Assert
-            Assert.AreEqual(_subscription.Id, addedSubscription.Id);
+            Assert.AreEqual(newSubscriptionHash, addedSubscriptionHash);
         }
 
         [Test]
@@ -194,55 +139,7 @@ namespace ShaverToolsShop.Test
             Assert.AreEqual(addedSubscription.StartDate, startDate);
         }
 
-        [Test]
-        public async Task SubscriptionChangesMustBeSaved_WhenWeStopedSubscription()
-        {
-            //Arrange
-            var endDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
-            _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(_subscription.Id)).ReturnsAsync(_subscription);
-
-
-            //Act
-            await _subscriptionService.StoppedSubscription(_subscription.Id, endDate);
-
-            //Assert
-            _subscriptionRepository.Verify(m => m.SaveAsync(), Times.Once);
-        }
-
-        [Test]
-        public async Task SubscriptionStatusMustBeStarted_WhenWeAddNewSubscription()
-        {
-            //Arrange
-            var startDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null);
-            _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
-
-            //Act
-            var addedSubscription = await _subscriptionService.AddNewSubscription(_subscription);
-
-            //Assert
-            Assert.AreEqual(SubscriptionStatus.Started, addedSubscription.SubscriptionStatus);
-        }
-
-        [Test]
-        public void WeGetListWithFirtyOneDay_WhenWeAskDaysForSubscription()
-        {
-            //Arrange
-            var daysInMonthList = new List<int>();
-            var day = 1;
-            for (var i = 0; i < 31; i++)
-            {
-                daysInMonthList.Add(day);
-                day++;
-            }
-
-            //Act
-            var newDaysInMonth = _subscriptionService.GetDaysInMonthSelectList().Select(x =>
-                int.Parse(x.Value)
-            ).ToList();
-
-            //Assert
-            Assert.AreEqual(daysInMonthList, newDaysInMonth);
-        }
+       
 
         [Test]
         public async Task WeGetRecreatedSubscriptionEntity_WhenWeUpdateSubscription()
@@ -250,29 +147,48 @@ namespace ShaverToolsShop.Test
             //Arrange
            var updatedSubscription = new Subscription
            {
-               Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+               Id = Guid.NewGuid(),
                StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
                EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
                FirstDeliveryDay = 15,
+               SubscriptionStatus = SubscriptionStatus.Started,
                Product =
                         new Product
                         {
-                            Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c077"),
                             Name = "Бритвенный станок + гель для бритья",
                             Price = 9
                         }
            };
+
+            var newSubscription = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
+                EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
+                FirstDeliveryDay = 15,
+                SubscriptionStatus = SubscriptionStatus.Started,
+                Product =
+                        new Product
+                        {
+                            Name = "Бритвенный станок + гель для бритья",
+                            Price = 9
+                        }
+            };
+
             _productReadRepository.Setup(m => m.GetProduct(updatedSubscription.ProductId)).ReturnsAsync(updatedSubscription.Product);
             _subscriptionRepository.Setup(m => m.GetSubscriptionAsync(updatedSubscription.Id)).ReturnsAsync(_subscription);
             _subscriptionRepository.Setup(m => m.AddNewSubscription(updatedSubscription))
-               .ReturnsAsync(new Subscription() { Id = Guid.NewGuid()});
+               .ReturnsAsync(newSubscription);
+            var updatedSubscriptionHash = updatedSubscription.GetHashCode();
+
 
             //Act
             var result = await  _subscriptionService.ChangeSubscription(updatedSubscription);
-            var updatedEntity = result.Addition as Subscription;
-       
+            var resultEntity = result.Addition as Subscription;
+            var resultEntityHash = resultEntity?.GetHashCode();
+
             //Assert
-            Assert.AreNotEqual(updatedSubscription.Id, updatedEntity.Id);
+            Assert.AreNotEqual(updatedSubscriptionHash, resultEntityHash);
         }
 
         [Test]
@@ -281,14 +197,14 @@ namespace ShaverToolsShop.Test
             //Arrange
             var updatedSubscription = new Subscription
             {
-                Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+                Id = Guid.NewGuid(),
                 StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
                 EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
                 FirstDeliveryDay = 15,
                 Product =
                          new Product
                          {
-                             Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c000"),
+                             Id = Guid.NewGuid(),
                              Name = "Бритвенный станок + гель для бритья",
                              Price = 9
                          }
@@ -309,14 +225,14 @@ namespace ShaverToolsShop.Test
             //Arrange
             var updatedSubscription = new Subscription
             {
-                Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c073"),
+                Id = Guid.NewGuid(),
                 StartDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null),
                 EndDate = DateTime.ParseExact("01.06.2017", "dd.MM.yyyy", null),
                 FirstDeliveryDay = 15,
                 Product =
                          new Product
                          {
-                             Id = Guid.Parse("0f19d0bc-1965-428c-a496-7b0cfa48c000"),
+                             Id = Guid.NewGuid(),
                              Name = "Бритвенный станок + гель для бритья",
                              Price = 9
                          }
