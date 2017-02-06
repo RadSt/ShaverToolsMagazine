@@ -82,11 +82,12 @@ namespace ShaverToolsShop.Test
             //Arrange
             var twoMonthsDate = DateTime.ParseExact("01.03.2017", "dd.MM.yyyy", null);
             var subscriptionCost = 3M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
             foreach (var subscription in _subscriptions)
             {
                 subscription.SubscriptionType = SubscriptionType.OnceInTwoMonths;
             }
+            SetSubscriptions(_subscriptions);
+
             //Act
             var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(twoMonthsDate);
 
@@ -104,7 +105,7 @@ namespace ShaverToolsShop.Test
                 subscription.SubscriptionType = SubscriptionType.OnceInMonth;
             }
             var subscriptionCost = 3M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+            SetSubscriptions(_subscriptions);
 
             //Act
             var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
@@ -124,13 +125,18 @@ namespace ShaverToolsShop.Test
                 subscription.SecondDeliveryDay = 28;
             }
             var subscriptionCost = 6M;
-            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(_subscriptions);
+            SetSubscriptions(_subscriptions);
 
             //Act
             var calculatedSubscriptionCost = await _subscriptionService.CalculateSubscriptionsCost(oneMonthDate);
 
             //Assert
             Assert.AreEqual(subscriptionCost, calculatedSubscriptionCost);
+        }
+
+        private void SetSubscriptions(List<Subscription> subscriptions)
+        {
+            _subscriptionReadRepository.Setup(m => m.GetAllSubscriptionsWithProducts()).ReturnsAsync(subscriptions);
         }
     }
 }

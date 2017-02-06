@@ -66,7 +66,6 @@ namespace ShaverToolsShop.Test
         public async Task SubscriptionStatusMustBeStarted_WhenWeAddNewSubscription()
         {
             //Arrange
-            var startDate = DateTime.ParseExact("01.01.2017", "dd.MM.yyyy", null);
             _subscriptionRepository.Setup(m => m.AddNewSubscription(_subscription)).ReturnsAsync(_subscription);
 
             //Act
